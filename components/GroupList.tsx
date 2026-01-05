@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { GroupRegistration } from '../types';
 import { subscribeToRegistrations, deleteRegistration, clearAllRegistrations } from '../services/storageService';
-import { Users, Trash2, Phone, School, AlertCircle, RefreshCw, LogOut, FileSpreadsheet, Database } from 'lucide-react';
+import { Users, Trash2, Phone, School, LogOut, FileSpreadsheet, Database } from 'lucide-react';
 
 interface GroupListProps {
   onLogout: () => void;

@@ -1,5 +1,5 @@
 import React from 'react';
-import { Cloud, Github, Globe, Code, Server, Database, ArrowRight, Settings } from 'lucide-react';
+import { Cloud, Code, Server, Database, Settings } from 'lucide-react';
 
 const HostingGuide: React.FC = () => {
   return (

@@ -1,14 +1,8 @@
 import { GoogleGenAI } from "@google/genai";
 
-const apiKey = process.env.API_KEY || '';
-
 export const generateTeamName = async (className: string, leaderName: string): Promise<string> => {
-  if (!apiKey) {
-    throw new Error("API Key belum dikonfigurasi.");
-  }
-
   try {
-    const ai = new GoogleGenAI({ apiKey });
+    const ai = new GoogleGenAI({ apiKey: process.env.API_KEY });
     
     const prompt = `
       Buatkan 1 nama tim yang kreatif dan keren untuk kelompok siswa sekolah jurusan Multimedia.
