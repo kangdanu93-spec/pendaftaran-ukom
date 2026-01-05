@@ -1,6 +1,6 @@
 import React from 'react';
 import { ViewState } from '../types';
-import { Layout, Users, FileText, HelpCircle } from 'lucide-react';
+import { Layout, Users, FileText } from 'lucide-react';
 
 interface NavbarProps {
   currentView: ViewState;
@@ -12,7 +12,6 @@ const Navbar: React.FC<NavbarProps> = ({ currentView, setView }) => {
     { view: ViewState.HOME, label: 'Beranda', icon: <Layout className="w-5 h-5" /> },
     { view: ViewState.FORM, label: 'Daftar Sekarang', icon: <FileText className="w-5 h-5" /> },
     { view: ViewState.LIST, label: 'Data Peserta', icon: <Users className="w-5 h-5" /> },
-    { view: ViewState.GUIDE, label: 'Cara Hosting Gratis', icon: <HelpCircle className="w-5 h-5" /> },
   ];
 
   return (

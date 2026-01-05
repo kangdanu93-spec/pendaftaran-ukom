@@ -11,6 +11,5 @@ export interface GroupRegistration {
 export enum ViewState {
   HOME = 'HOME',
   FORM = 'FORM',
-  LIST = 'LIST',
-  GUIDE = 'GUIDE'
+  LIST = 'LIST'
 }

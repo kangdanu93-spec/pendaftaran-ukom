@@ -2,7 +2,6 @@ import React, { useState } from 'react';
 import Navbar from './components/Navbar';
 import RegistrationForm from './components/RegistrationForm';
 import GroupList from './components/GroupList';
-import HostingGuide from './components/HostingGuide';
 import LoginForm from './components/LoginForm';
 import { ViewState } from './types';
 import { ClipboardList, Users, ArrowRight } from 'lucide-react';
@@ -41,8 +40,6 @@ const App: React.FC = () => {
           return <LoginForm onLogin={() => setIsLoggedIn(true)} />;
         }
         return <GroupList onLogout={() => setIsLoggedIn(false)} />;
-      case ViewState.GUIDE:
-        return <HostingGuide />;
       case ViewState.HOME:
       default:
         return (
