@@ -222,17 +222,6 @@ const GroupList: React.FC<GroupListProps> = ({ onLogout }) => {
           ))}
         </div>
       )}
-      
-      {/* Footer Note */}
-      <div className="bg-emerald-50 border border-emerald-100 rounded-xl p-5 flex items-start gap-4 text-emerald-900 shadow-sm">
-        <Database className="w-6 h-6 flex-shrink-0 text-emerald-600 mt-0.5" />
-        <div>
-          <h4 className="font-bold text-emerald-800 mb-1">Status: Online Database</h4>
-          <p className="text-sm leading-relaxed text-emerald-800/80">
-            Aplikasi ini sekarang terhubung ke <strong>Google Firebase</strong>. Data tersimpan di Cloud (Internet). Anda bisa melihat data yang diinput siswa secara langsung (Realtime) tanpa perlu refresh halaman. Pastikan koneksi internet stabil.
-          </p>
-        </div>
-      </div>
     </div>
   );
 };

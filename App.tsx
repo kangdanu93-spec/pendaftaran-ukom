@@ -46,7 +46,8 @@ const App: React.FC = () => {
           <div className="max-w-5xl mx-auto">
             <div className="text-center py-20 px-4 animate-fade-in">
               <h1 className="text-4xl md:text-5xl font-extrabold text-gray-900 mb-6 tracking-tight leading-tight">
-                Portal Pendaftaran <span className="text-transparent bg-clip-text bg-gradient-to-r from-emerald-600 to-teal-600">Kelompok UKOM (Uji Kompetensi) SMK MA Buaranjati 2026</span>
+                Portal Pendaftaran <span className="text-transparent bg-clip-text bg-gradient-to-r from-emerald-600 to-teal-600">Kelompok UKOM</span>
+                <span className="block mt-2 text-transparent bg-clip-text bg-gradient-to-r from-emerald-600 to-teal-600">SMK MA Buaranjati 2026</span>
               </h1>
               <p className="text-xl text-gray-500 max-w-2xl mx-auto mb-10">
                 Platform digital untuk memudahkan mengelola pembentukan proyek secara efisien.
