@@ -568,4 +568,60 @@ const GroupList: React.FC<GroupListProps> = ({ currentUser, onLogout }) => {
                                                     {/* SCORE DISPLAY / INPUT */}
                                                     <div className="flex items-center">
                                                         {isGradingMode ? (
-                                                            <div className="flex items-center
+                                                            <div className="flex items-center gap-1 print:hidden">
+                                                                <input type="text" className="w-12 h-8 text-center border border-gray-300 rounded focus:border-emerald-500 focus:ring-1 focus:ring-emerald-500 text-sm font-bold" placeholder="0" value={currentInputValue} onChange={(e) => handleScoreChange(member.id, e.target.value)} onKeyDown={(e) => {if (e.key === 'Enter') handleSaveScore(member.id);}} />
+                                                                <button onClick={() => handleSaveScore(member.id)} disabled={isSaving} className="w-8 h-8 flex items-center justify-center bg-emerald-100 text-emerald-700 rounded hover:bg-emerald-200 transition-colors">
+                                                                    {isSaving ? <span className="w-3 h-3 border-2 border-emerald-600 border-t-transparent rounded-full animate-spin"></span> : <Check className="w-4 h-4" />}
+                                                                </button>
+                                                            </div>
+                                                        ) : (
+                                                            member.score !== undefined ? (
+                                                                // Nilai Berwarna saat Print
+                                                                <span className={`text-xs font-bold px-2 py-1 rounded border print:border-gray-300 ${member.score >= 75 ? 'bg-green-100 text-green-700 border-green-200 print:bg-green-50' : 'bg-red-100 text-red-700 border-red-200 print:bg-red-50'}`}>Nilai: {member.score}</span>
+                                                            ) : (<span className="text-[10px] text-gray-400 italic print:hidden">Belum dinilai</span>)
+                                                        )}
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            </div>
+                                        </div>
+                                    </li>
+                                    );
+                                })}
+                            </ul>
+                            ) : (
+                            <div className="h-full flex flex-col items-center justify-center text-gray-400 print:hidden">
+                                <Users className="w-8 h-8 mb-2 opacity-20" />
+                                <span className="text-sm italic opacity-60">Belum ada anggota</span>
+                            </div>
+                            )}
+                        </div>
+                        </div>
+                    );
+                    })}
+                </div>
+                </div>
+            ))
+          )}
+
+          {/* TANDA TANGAN (Hanya Muncul di Halaman Terakhir Print) */}
+          <div className="hidden print:flex justify-between mt-12 px-8 break-inside-avoid page-break-inside-avoid">
+            <div className="text-center w-1/3">
+               <p className="mb-20 text-black text-sm">Mengetahui,<br/>Kepala Sekolah</p>
+               <p className="font-bold underline text-black text-sm">Siti Komalia, S.Farm</p>
+               <p className="text-black text-xs">NIP. 19650421 199003 1 008</p>
+            </div>
+             <div className="text-center w-1/3">
+               <p className="mb-20 text-black text-sm">Tangerang, {new Date().toLocaleDateString('id-ID', {day: 'numeric', month: 'long', year: 'numeric'})}<br/>Guru Produktif</p>
+               <p className="font-bold underline text-black text-sm">{currentUser.fullName}</p>
+               <p className="text-black text-xs">NIP. -</p>
+            </div>
+          </div>
+
+        </div>
+      )}
+    </div>
+  );
+};
+
+export default GroupList;
