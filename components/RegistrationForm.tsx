@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
-import { GroupRegistration } from '../types';
-import { saveRegistration, checkGroupAvailability, subscribeToRegistrations } from '../services/storageService';
-import { Loader2, Save, FileText, User, School, Phone, Users, AlertCircle } from 'lucide-react';
+import { GroupRegistration, SystemSettings } from '../types';
+import { saveRegistration, checkGroupAvailability, subscribeToRegistrations, checkDuplicateStudent, subscribeToSettings } from '../services/storageService';
+import { Loader2, Save, FileText, User, School, Phone, Users, AlertCircle, Lock } from 'lucide-react';
 
 interface RegistrationFormProps {
   onSuccess: () => void;
@@ -16,19 +16,28 @@ const RegistrationForm: React.FC<RegistrationFormProps> = ({ onSuccess }) => {
   
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [loadingInit, setLoadingInit] = useState(true);
   
   // Kita simpan data lokal untuk menghitung kuota secara real-time di UI dropdown
   const [registrations, setRegistrations] = useState<GroupRegistration[]>([]);
+  const [settings, setSettings] = useState<SystemSettings>({ isRegistrationOpen: true });
 
   useEffect(() => {
-    // Subscribe ke data realtime agar jika ada orang lain daftar, 
-    // kuota di dropdown langsung terupdate
-    const unsubscribe = subscribeToRegistrations((data) => {
+    // Subscribe ke data realtime
+    const unsubscribeReg = subscribeToRegistrations((data) => {
       setRegistrations(data);
+    });
+
+    const unsubscribeSettings = subscribeToSettings((data) => {
+      setSettings(data);
+      setLoadingInit(false);
     });
     
     // Cleanup listener saat component unmount
-    return () => unsubscribe();
+    return () => {
+      unsubscribeReg();
+      unsubscribeSettings();
+    }
   }, []);
 
   // Reset pilihan kelompok jika kelas berubah
@@ -49,7 +58,25 @@ const RegistrationForm: React.FC<RegistrationFormProps> = ({ onSuccess }) => {
     setIsSubmitting(true);
 
     try {
-      // Cek ketersediaan server-side sebelum simpan (Double check)
+      // 1. Cek apakah pendaftaran masih buka (Prevent bypass)
+      if (!settings.isRegistrationOpen) {
+         setError("Pendaftaran telah ditutup oleh Admin.");
+         setIsSubmitting(false);
+         return;
+      }
+
+      // Pastikan nama uppercase saat pengecekan duplikasi & penyimpanan
+      const finalStudentName = studentName.toUpperCase();
+
+      // 2. Cek DUPLIKASI DATA (Nama & Kelas)
+      const isDuplicate = await checkDuplicateStudent(finalStudentName, className);
+      if (isDuplicate) {
+        setError(`Nama "${finalStudentName}" sudah terdaftar di kelas ${className}. Tidak boleh mendaftar ganda.`);
+        setIsSubmitting(false);
+        return;
+      }
+
+      // 3. Cek ketersediaan server-side sebelum simpan (Double check)
       const status = await checkGroupAvailability(className, groupSelection);
       
       if (status.isFull) {
@@ -62,7 +89,7 @@ const RegistrationForm: React.FC<RegistrationFormProps> = ({ onSuccess }) => {
         id: '', // ID akan digenerate Firebase
         teamName: groupSelection,
         className,
-        studentName,
+        studentName: finalStudentName, // SIMPAN SEBAGAI HURUF BESAR
         gender,
         whatsapp,
         createdAt: new Date().toISOString()
@@ -94,6 +121,29 @@ const RegistrationForm: React.FC<RegistrationFormProps> = ({ onSuccess }) => {
     };
   };
 
+  if (loadingInit) {
+    return (
+      <div className="flex justify-center py-20">
+         <Loader2 className="w-10 h-10 animate-spin text-emerald-600" />
+      </div>
+    );
+  }
+
+  // JIKA PENDAFTARAN DITUTUP
+  if (!settings.isRegistrationOpen) {
+    return (
+      <div className="max-w-3xl mx-auto bg-white rounded-xl shadow-lg overflow-hidden border border-red-100 animate-fade-in-up text-center p-12">
+        <div className="bg-red-50 w-24 h-24 rounded-full flex items-center justify-center mx-auto mb-6">
+          <Lock className="w-12 h-12 text-red-500" />
+        </div>
+        <h2 className="text-2xl font-bold text-gray-800 mb-2">Pendaftaran Ditutup</h2>
+        <p className="text-gray-500 max-w-md mx-auto">
+          Mohon maaf, formulir pendaftaran UKOM saat ini sudah ditutup oleh Guru/Admin. Silakan hubungi guru terkait jika Anda belum mendapatkan kelompok.
+        </p>
+      </div>
+    );
+  }
+
   return (
     <div className="max-w-3xl mx-auto bg-white rounded-xl shadow-lg overflow-hidden border border-gray-100 animate-fade-in-up">
       <div className="bg-emerald-600 px-6 py-4">
@@ -105,7 +155,7 @@ const RegistrationForm: React.FC<RegistrationFormProps> = ({ onSuccess }) => {
 
       <form onSubmit={handleSubmit} className="p-6 space-y-6">
         {error && (
-          <div className="bg-red-50 text-red-700 p-4 rounded-lg text-sm border-l-4 border-red-500 flex items-start gap-2">
+          <div className="bg-red-50 text-red-700 p-4 rounded-lg text-sm border-l-4 border-red-500 flex items-start gap-2 animate-pulse">
             <AlertCircle className="w-5 h-5 flex-shrink-0 mt-0.5" />
             <span>{error}</span>
           </div>
@@ -126,11 +176,12 @@ const RegistrationForm: React.FC<RegistrationFormProps> = ({ onSuccess }) => {
                 <input
                   type="text"
                   value={studentName}
-                  onChange={(e) => setStudentName(e.target.value)}
-                  className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500"
+                  onChange={(e) => setStudentName(e.target.value.toUpperCase())} // FORCE UPPERCASE SAAT MENGETIK
+                  className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 uppercase placeholder:normal-case"
                   placeholder="Masukkan nama lengkap Anda"
                 />
               </div>
+              <p className="text-xs text-gray-500 mt-1">Nama otomatis menjadi huruf kapital.</p>
             </div>
 
             {/* Jenis Kelamin */}

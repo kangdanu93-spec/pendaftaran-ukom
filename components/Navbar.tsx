@@ -1,6 +1,6 @@
 import React from 'react';
 import { ViewState } from '../types';
-import { Layout, Users, FileText } from 'lucide-react';
+import { Layout, Users, FileText, SearchCheck, List } from 'lucide-react';
 
 interface NavbarProps {
   currentView: ViewState;
@@ -10,12 +10,14 @@ interface NavbarProps {
 const Navbar: React.FC<NavbarProps> = ({ currentView, setView }) => {
   const navItems = [
     { view: ViewState.HOME, label: 'Beranda', icon: <Layout className="w-5 h-5" /> },
-    { view: ViewState.FORM, label: 'Daftar Sekarang', icon: <FileText className="w-5 h-5" /> },
-    { view: ViewState.LIST, label: 'Data Peserta', icon: <Users className="w-5 h-5" /> },
+    { view: ViewState.FORM, label: 'Daftar', icon: <FileText className="w-5 h-5" /> },
+    { view: ViewState.PUBLIC_LIST, label: 'Lihat Kelompok', icon: <List className="w-5 h-5" /> },
+    { view: ViewState.CHECK_STATUS, label: 'Cek Nilai', icon: <SearchCheck className="w-5 h-5" /> },
+    { view: ViewState.LIST, label: 'Admin', icon: <Users className="w-5 h-5" /> },
   ];
 
   return (
-    <nav className="bg-white shadow-sm sticky top-0 z-50">
+    <nav className="bg-white shadow-sm sticky top-0 z-50 print:hidden">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex justify-between h-16">
           <div className="flex items-center">
@@ -61,7 +63,7 @@ const Navbar: React.FC<NavbarProps> = ({ currentView, setView }) => {
                 }`}
               >
                 {item.icon}
-                <span className="text-[10px] mt-1">{item.label}</span>
+                <span className="text-[10px] mt-1 text-center leading-tight max-w-[60px]">{item.label}</span>
               </button>
             ))}
       </div>

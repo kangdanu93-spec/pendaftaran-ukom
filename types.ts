@@ -1,3 +1,4 @@
+
 export interface GroupRegistration {
   id: string;
   teamName: string; // e.g. "Kelompok 1"
@@ -6,10 +7,27 @@ export interface GroupRegistration {
   gender: string; // "Laki-laki" | "Perempuan"
   whatsapp: string;
   createdAt: string;
+  score?: number; // Optional score field (0-100)
+}
+
+export interface AdminUser {
+  id: string;
+  username: string;
+  password: string; // In real app, this should be hashed. For school project, plain text is acceptable but handle with care.
+  fullName: string;
+  role: 'superadmin' | 'admin';
+  createdAt: string;
+}
+
+export interface SystemSettings {
+  isRegistrationOpen: boolean;
+  announcement?: string;
 }
 
 export enum ViewState {
   HOME = 'HOME',
   FORM = 'FORM',
-  LIST = 'LIST'
+  LIST = 'LIST',
+  CHECK_STATUS = 'CHECK_STATUS',
+  PUBLIC_LIST = 'PUBLIC_LIST'
 }

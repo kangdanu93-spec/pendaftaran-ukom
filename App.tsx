@@ -3,13 +3,15 @@ import Navbar from './components/Navbar';
 import RegistrationForm from './components/RegistrationForm';
 import GroupList from './components/GroupList';
 import LoginForm from './components/LoginForm';
-import { ViewState } from './types';
-import { ClipboardList, Users, ArrowRight, MessageCircle } from 'lucide-react';
+import StudentStatusCheck from './components/StudentStatusCheck';
+import PublicGroupView from './components/PublicGroupView';
+import { ViewState, AdminUser } from './types';
+import { ClipboardList, Users, ArrowRight, MessageCircle, Award, List } from 'lucide-react';
 
 const App: React.FC = () => {
   const [currentView, setCurrentView] = useState<ViewState>(ViewState.HOME);
   const [showSuccess, setShowSuccess] = useState(false);
-  const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const [currentUser, setCurrentUser] = useState<AdminUser | null>(null);
 
   const handleRegistrationSuccess = () => {
     setShowSuccess(true);
@@ -47,21 +49,25 @@ const App: React.FC = () => {
             <button 
               onClick={() => {
                 setShowSuccess(false);
-                setCurrentView(ViewState.LIST);
+                setCurrentView(ViewState.CHECK_STATUS); // Redirect to check status instead of list
               }}
               className="text-gray-500 font-medium hover:text-emerald-600 hover:underline transition-colors"
             >
-              Lihat Data Peserta &rarr;
+              Cek Status & Nilai &rarr;
             </button>
           </div>
         ) : (
           <RegistrationForm onSuccess={handleRegistrationSuccess} />
         );
+      case ViewState.CHECK_STATUS:
+          return <StudentStatusCheck />;
+      case ViewState.PUBLIC_LIST:
+          return <PublicGroupView />;
       case ViewState.LIST:
-        if (!isLoggedIn) {
-          return <LoginForm onLogin={() => setIsLoggedIn(true)} />;
+        if (!currentUser) {
+          return <LoginForm onLogin={(user) => setCurrentUser(user)} />;
         }
-        return <GroupList onLogout={() => setIsLoggedIn(false)} />;
+        return <GroupList currentUser={currentUser} onLogout={() => setCurrentUser(null)} />;
       case ViewState.HOME:
       default:
         return (
@@ -83,10 +89,10 @@ const App: React.FC = () => {
                   Daftar Sekarang <ArrowRight className="w-5 h-5" />
                 </button>
                 <button 
-                  onClick={() => setCurrentView(ViewState.LIST)}
-                  className="px-8 py-4 bg-white text-gray-700 border border-gray-200 rounded-xl font-bold text-lg shadow-sm hover:bg-gray-50 transition-all flex items-center gap-2 hover:border-emerald-200"
+                  onClick={() => setCurrentView(ViewState.PUBLIC_LIST)}
+                  className="px-8 py-4 bg-blue-50 text-blue-700 border border-blue-100 rounded-xl font-bold text-lg shadow-sm hover:bg-blue-100 transition-all flex items-center gap-2"
                 >
-                  <Users className="w-5 h-5" /> Lihat Peserta
+                   <List className="w-5 h-5" /> Lihat Kelompok
                 </button>
               </div>
             </div>
@@ -106,8 +112,8 @@ const App: React.FC = () => {
                 </div>
                 <div className="bg-white p-6 rounded-xl shadow-[0_4px_20px_-10px_rgba(0,0,0,0.1)] border border-gray-100 hover:shadow-lg hover:border-green-100 transition-all duration-300 group">
                   <div className="w-12 h-12 bg-green-50 rounded-lg flex items-center justify-center mb-4 text-green-600 font-bold text-xl group-hover:bg-green-600 group-hover:text-white transition-colors">3</div>
-                  <h3 className="text-xl font-bold mb-2 text-gray-800">Cek Data Peserta</h3>
-                  <p className="text-gray-600 leading-relaxed">Setelah menyimpan, buka menu "Lihat Peserta" untuk memastikan namamu sudah masuk ke dalam kelompok.</p>
+                  <h3 className="text-xl font-bold mb-2 text-gray-800">Cek Nilai</h3>
+                  <p className="text-gray-600 leading-relaxed">Pantau hasil penilaian UKOM secara berkala melalui menu "Cek Nilai" cukup dengan Nama Lengkap.</p>
                 </div>
               </div>
             </div>
@@ -122,7 +128,7 @@ const App: React.FC = () => {
       <main className="flex-grow w-full py-8 px-4 sm:px-6 lg:px-8">
         {renderContent()}
       </main>
-      <footer className="bg-white border-t border-gray-100 py-8 mt-auto">
+      <footer className="bg-white border-t border-gray-100 py-8 mt-auto print:hidden">
         <div className="max-w-7xl mx-auto px-4 text-center text-gray-500 text-sm">
           <p>© {new Date().getFullYear()} EduSMKMA. Dibuat dengan bangga untuk Pendidikan Indonesia.</p>
         </div>
