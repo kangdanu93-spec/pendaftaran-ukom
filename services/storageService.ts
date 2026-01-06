@@ -75,8 +75,14 @@ export const checkGroupAvailability = async (className: string, teamName: string
     (reg) => reg.className === className && reg.teamName === teamName
   ).length;
   
+  // Logic: Kelompok 1-5 maks 6 orang, Kelompok 6 maks 7 orang
+  const match = teamName.match(/Kelompok (\d+)/);
+  const groupNum = match ? parseInt(match[1]) : 0;
+  
+  const limit = groupNum === 6 ? 7 : 6;
+
   return {
     count,
-    isFull: count >= 7
+    isFull: count >= limit
   };
 };

@@ -82,9 +82,13 @@ const RegistrationForm: React.FC<RegistrationFormProps> = ({ onSuccess }) => {
   const getOptionLabel = (num: number) => {
     const gName = `Kelompok ${num}`;
     const count = registrations.filter(r => r.className === className && r.teamName === gName).length;
-    const isFull = count >= 7;
+    
+    // Logic: Kelompok 1-5 maks 6 orang, Kelompok 6 maks 7 orang
+    const limit = num === 6 ? 7 : 6;
+    
+    const isFull = count >= limit;
     return {
-      label: `${gName} (${count}/7 Orang)${isFull ? ' - PENUH' : ''}`,
+      label: `${gName} (${count}/${limit} Orang)${isFull ? ' - PENUH' : ''}`,
       value: gName,
       disabled: isFull
     };
@@ -185,7 +189,7 @@ const RegistrationForm: React.FC<RegistrationFormProps> = ({ onSuccess }) => {
 
             {/* Pilih Kelompok */}
             <div className="md:col-span-2">
-              <label className="block text-sm font-medium text-gray-700 mb-1">Pilih Kelompok (Maks 7 Anggota) *</label>
+              <label className="block text-sm font-medium text-gray-700 mb-1">Pilih Kelompok (Kel. 1-5: Maks 6, Kel. 6: Maks 7) *</label>
               <div className="relative">
                  <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
                   <Users className="h-5 w-5 text-gray-400" />
@@ -210,7 +214,7 @@ const RegistrationForm: React.FC<RegistrationFormProps> = ({ onSuccess }) => {
                 </select>
               </div>
               <p className="text-xs text-gray-500 mt-1">
-                Kapasitas kelompok maksimal 7 orang. Data disinkronkan secara langsung.
+                Kapasitas: Kelompok 1-5 (Max 6), Kelompok 6 (Max 7).
               </p>
             </div>
           </div>

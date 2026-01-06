@@ -156,7 +156,11 @@ const GroupList: React.FC<GroupListProps> = ({ onLogout }) => {
                 {groupNumbers.map(num => {
                   const teamName = `Kelompok ${num}`;
                   const teamMembers = registrations.filter(r => r.className === className && r.teamName === teamName);
-                  const isFull = teamMembers.length >= 7;
+                  
+                  // Logic: Kelompok 1-5 maks 6 orang, Kelompok 6 maks 7 orang
+                  const limit = num === 6 ? 7 : 6;
+                  
+                  const isFull = teamMembers.length >= limit;
                   const isEmpty = teamMembers.length === 0;
 
                   return (
@@ -171,7 +175,7 @@ const GroupList: React.FC<GroupListProps> = ({ onLogout }) => {
                           isFull ? 'bg-orange-100 text-orange-700' : 
                           isEmpty ? 'bg-gray-200 text-gray-500' : 'bg-emerald-100 text-emerald-700'
                         }`}>
-                          {teamMembers.length} / 7
+                          {teamMembers.length} / {limit}
                         </span>
                       </div>
                       
