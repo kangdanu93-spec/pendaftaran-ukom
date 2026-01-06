@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { GroupRegistration, AdminUser, SystemSettings } from '../types';
-import { subscribeToRegistrations, deleteRegistration, clearAllRegistrations, updateRegistration, subscribeToSettings, updateSystemSettings } from '../services/storageService';
-import { Users, Trash2, Phone, School, LogOut, FileSpreadsheet, Database, Shield, GraduationCap, Check, Lock, Unlock, AlertTriangle, Search, X, Printer } from 'lucide-react';
+import { subscribeToRegistrations, deleteRegistration, updateRegistration, subscribeToSettings, updateSystemSettings } from '../services/storageService';
+import { Users, Trash2, Phone, School, LogOut, FileSpreadsheet, Database, Shield, GraduationCap, Check, Lock, Unlock, Search, X, Printer } from 'lucide-react';
 import UserManagement from './UserManagement';
 
 interface GroupListProps {
@@ -61,16 +61,6 @@ const GroupList: React.FC<GroupListProps> = ({ currentUser, onLogout }) => {
       alert("Gagal menghapus data. Cek koneksi internet.");
     } finally {
       setIsDeleting(false);
-    }
-  };
-
-  const handleClearAll = async () => {
-     if (window.confirm('BAHAYA: Ini akan menghapus SEMUA data di Database Server. Data tidak bisa dikembalikan. Lanjutkan?')) {
-      try {
-        await clearAllRegistrations();
-      } catch (e) {
-        alert("Gagal menghapus data.");
-      }
     }
   };
 

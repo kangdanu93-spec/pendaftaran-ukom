@@ -1,5 +1,5 @@
 import { db } from './firebaseConfig';
-import { ref, push, onValue, remove, get, child, update, set } from "firebase/database";
+import { ref, push, onValue, remove, get, child, update } from "firebase/database";
 import { GroupRegistration, AdminUser, SystemSettings } from '../types';
 
 const DB_PATH = 'registrations';

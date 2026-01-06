@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { GroupRegistration } from '../types';
 import { subscribeToRegistrations } from '../services/storageService';
-import { Users, School, Loader2, Info } from 'lucide-react';
+import { School, Loader2, Info } from 'lucide-react';
 
 const PublicGroupView: React.FC = () => {
   const [registrations, setRegistrations] = useState<GroupRegistration[]>([]);
