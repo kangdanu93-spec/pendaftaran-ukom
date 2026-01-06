@@ -27,6 +27,28 @@
       .animate-fade-in {
         animation: fadeInUp 0.5s ease-out forwards;
       }
+
+      /* PRINT STYLES */
+      @media print {
+        @page {
+          margin: 1cm;
+          size: A4 portrait;
+        }
+        body {
+          background-color: white !important;
+          -webkit-print-color-adjust: exact !important;
+          print-color-adjust: exact !important;
+        }
+        /* Memastikan elemen tidak terpotong di tengah baris */
+        .break-inside-avoid {
+          break-inside: avoid;
+          page-break-inside: avoid;
+        }
+        /* Sembunyikan scrollbar saat print */
+        ::-webkit-scrollbar {
+          display: none;
+        }
+      }
     </style>
 <script type="importmap">
 {

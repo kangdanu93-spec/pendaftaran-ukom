@@ -123,9 +123,11 @@ const App: React.FC = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-50 via-white to-emerald-50/50 flex flex-col font-sans">
+    // Updated: print:bg-white to remove gradients in print, print:h-auto to allow full page printing
+    <div className="min-h-screen bg-gradient-to-br from-slate-50 via-white to-emerald-50/50 flex flex-col font-sans print:bg-white print:h-auto print:overflow-visible">
       <Navbar currentView={currentView} setView={setCurrentView} />
-      <main className="flex-grow w-full py-8 px-4 sm:px-6 lg:px-8">
+      {/* Updated: print:p-0 to maximize print area */}
+      <main className="flex-grow w-full py-8 px-4 sm:px-6 lg:px-8 print:p-0 print:w-full">
         {renderContent()}
       </main>
       <footer className="bg-white border-t border-gray-100 py-8 mt-auto print:hidden">
