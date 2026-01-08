@@ -1,5 +1,5 @@
 import React from 'react';
-import { Clapperboard, Film, MonitorPlay, PlayCircle, FolderOutput, UserCog, Camera, Edit3, Mic2, ClipboardList, Presentation, FolderOpen, FileAudio, FileVideo, FileImage, FileText, LayoutTemplate, Eye, Speaker, Info, Clock, Timer, Scissors, Save, CheckCircle, BookOpen } from 'lucide-react';
+import { Clapperboard, Film, MonitorPlay, PlayCircle, FolderOutput, UserCog, Camera, Edit3, Mic2, ClipboardList, Presentation, FolderOpen, FileImage, FileText, Clock, Timer, Scissors, Save } from 'lucide-react';
 
 const WorkflowGuide: React.FC = () => {
   

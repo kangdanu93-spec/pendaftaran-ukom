@@ -7,7 +7,7 @@ import StudentStatusCheck from './components/StudentStatusCheck';
 import PublicGroupView from './components/PublicGroupView';
 import WorkflowGuide from './components/WorkflowGuide';
 import { ViewState, AdminUser } from './types';
-import { ClipboardList, ArrowRight, MessageCircle, List, Briefcase } from 'lucide-react';
+import { ClipboardList, ArrowRight, MessageCircle, Briefcase } from 'lucide-react';
 
 const App: React.FC = () => {
   const [currentView, setCurrentView] = useState<ViewState>(ViewState.HOME);
