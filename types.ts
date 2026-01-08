@@ -21,6 +21,7 @@ export interface AdminUser {
 
 export interface SystemSettings {
   isRegistrationOpen: boolean;
+  forceOpen?: boolean; // New: Override schedule
   announcement?: string;
 }
 

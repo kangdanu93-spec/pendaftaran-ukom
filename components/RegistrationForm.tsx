@@ -1,11 +1,17 @@
 import React, { useState, useEffect } from 'react';
 import { GroupRegistration, SystemSettings } from '../types';
 import { saveRegistration, checkGroupAvailability, subscribeToRegistrations, checkDuplicateStudent, subscribeToSettings } from '../services/storageService';
-import { Loader2, Save, FileText, User, School, Phone, Users, AlertCircle, Lock } from 'lucide-react';
+import { Loader2, Save, FileText, User, School, Phone, Users, AlertCircle, Lock, Calendar, Clock, Info, Zap } from 'lucide-react';
 
 interface RegistrationFormProps {
   onSuccess: () => void;
 }
+
+// KONFIGURASI JADWAL OTOMATIS
+// Format: YYYY-MM-DDTHH:mm:ss
+// Note: Menggunakan waktu lokal browser pengguna (WIB jika user di Indonesia)
+const SCHEDULE_START = new Date('2026-01-08T13:00:00');
+const SCHEDULE_END = new Date('2026-01-09T23:59:00');
 
 const RegistrationForm: React.FC<RegistrationFormProps> = ({ onSuccess }) => {
   const [studentName, setStudentName] = useState('');
@@ -20,9 +26,15 @@ const RegistrationForm: React.FC<RegistrationFormProps> = ({ onSuccess }) => {
   
   // Kita simpan data lokal untuk menghitung kuota secara real-time di UI dropdown
   const [registrations, setRegistrations] = useState<GroupRegistration[]>([]);
-  const [settings, setSettings] = useState<SystemSettings>({ isRegistrationOpen: true });
+  const [settings, setSettings] = useState<SystemSettings>({ isRegistrationOpen: true, forceOpen: false });
+  
+  // State untuk waktu saat ini (untuk auto update status)
+  const [currentTime, setCurrentTime] = useState(new Date());
 
   useEffect(() => {
+    // Timer untuk update waktu setiap detik agar status buka/tutup realtime
+    const timer = setInterval(() => setCurrentTime(new Date()), 1000);
+
     // Subscribe ke data realtime
     const unsubscribeReg = subscribeToRegistrations((data) => {
       setRegistrations(data);
@@ -35,6 +47,7 @@ const RegistrationForm: React.FC<RegistrationFormProps> = ({ onSuccess }) => {
     
     // Cleanup listener saat component unmount
     return () => {
+      clearInterval(timer);
       unsubscribeReg();
       unsubscribeSettings();
     }
@@ -44,6 +57,19 @@ const RegistrationForm: React.FC<RegistrationFormProps> = ({ onSuccess }) => {
   useEffect(() => {
     setGroupSelection('');
   }, [className]);
+
+  // --- LOGIKA JADWAL OTOMATIS ---
+  const isBeforeOpen = currentTime < SCHEDULE_START;
+  const isAfterClose = currentTime > SCHEDULE_END;
+  const isScheduleOpen = !isBeforeOpen && !isAfterClose;
+  
+  // Logic: 
+  // 1. Jika Force Open Aktif -> BUKA (Abaikan jadwal & status system enabled)
+  // 2. Jika Tidak Force -> Cek (System Enabled AND Schedule Open)
+  const isForced = settings.forceOpen === true;
+  const isSystemActive = settings.isRegistrationOpen && isScheduleOpen;
+  
+  const isRegistrationActive = isForced || isSystemActive;
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -59,10 +85,24 @@ const RegistrationForm: React.FC<RegistrationFormProps> = ({ onSuccess }) => {
 
     try {
       // 1. Cek apakah pendaftaran masih buka (Prevent bypass)
-      if (!settings.isRegistrationOpen) {
-         setError("Pendaftaran telah ditutup oleh Admin.");
-         setIsSubmitting(false);
-         return;
+      
+      // Jika TIDAK dalam mode Force Open, lakukan cek jadwal ketat
+      if (!settings.forceOpen) {
+          if (!settings.isRegistrationOpen) {
+            setError("Pendaftaran telah ditutup oleh Admin.");
+            setIsSubmitting(false);
+            return;
+          }
+          if (new Date() < SCHEDULE_START) {
+            setError("Pendaftaran belum dibuka sesuai jadwal.");
+            setIsSubmitting(false);
+            return;
+          }
+          if (new Date() > SCHEDULE_END) {
+            setError("Pendaftaran sudah ditutup (melewati batas waktu).");
+            setIsSubmitting(false);
+            return;
+          }
       }
 
       // Pastikan nama uppercase saat pengecekan duplikasi & penyimpanan
@@ -129,17 +169,53 @@ const RegistrationForm: React.FC<RegistrationFormProps> = ({ onSuccess }) => {
     );
   }
 
-  // JIKA PENDAFTARAN DITUTUP
-  if (!settings.isRegistrationOpen) {
+  // TAMPILAN JIKA PENDAFTARAN DITUTUP / BELUM DIBUKA
+  if (!isRegistrationActive) {
+    let title = "Pendaftaran Ditutup";
+    let message = "Formulir tidak tersedia saat ini.";
+    let icon = <Lock className="w-12 h-12 text-red-500" />;
+    let bgColor = "border-red-100";
+    let iconBg = "bg-red-50";
+
+    if (!settings.isRegistrationOpen) {
+        // Ditutup manual oleh admin
+        message = "Mohon maaf, formulir pendaftaran sedang ditutup sementara oleh Guru/Admin.";
+    } else if (isBeforeOpen) {
+        // Belum waktunya
+        title = "Pendaftaran Belum Dibuka";
+        message = "Harap bersabar menunggu jadwal pendaftaran dimulai.";
+        icon = <Clock className="w-12 h-12 text-blue-500" />;
+        bgColor = "border-blue-100";
+        iconBg = "bg-blue-50";
+    } else if (isAfterClose) {
+        // Sudah lewat
+        title = "Pendaftaran Selesai";
+        message = "Waktu pendaftaran telah berakhir. Silakan hubungi guru jika belum mendapat kelompok.";
+    }
+
     return (
-      <div className="max-w-3xl mx-auto bg-white rounded-xl shadow-lg overflow-hidden border border-red-100 animate-fade-in-up text-center p-12">
-        <div className="bg-red-50 w-24 h-24 rounded-full flex items-center justify-center mx-auto mb-6">
-          <Lock className="w-12 h-12 text-red-500" />
+      <div className={`max-w-3xl mx-auto bg-white rounded-xl shadow-lg overflow-hidden border ${bgColor} animate-fade-in-up text-center p-8 md:p-12`}>
+        <div className={`${iconBg} w-24 h-24 rounded-full flex items-center justify-center mx-auto mb-6`}>
+          {icon}
         </div>
-        <h2 className="text-2xl font-bold text-gray-800 mb-2">Pendaftaran Ditutup</h2>
-        <p className="text-gray-500 max-w-md mx-auto">
-          Mohon maaf, formulir pendaftaran UKOM saat ini sudah ditutup oleh Guru/Admin. Silakan hubungi guru terkait jika Anda belum mendapatkan kelompok.
+        <h2 className="text-2xl font-bold text-gray-800 mb-3">{title}</h2>
+        
+        {/* PESAN JADWAL KHUSUS */}
+        <div className="bg-gray-50 border border-gray-200 rounded-xl p-4 md:p-6 mb-6 max-w-lg mx-auto">
+            <p className="text-gray-800 font-medium leading-relaxed">
+                Pendaftaran di buka Hari <span className="font-bold text-emerald-700">Kamis, 08 Januari 2026 Pukul 13.00</span> sampai <span className="font-bold text-red-600">Jum'at 09 Januari 2026 Pukul 23.59</span>
+            </p>
+        </div>
+
+        <p className="text-gray-500 text-sm max-w-md mx-auto">
+          {message}
         </p>
+
+        {isBeforeOpen && (
+             <div className="mt-6 text-xs text-gray-400">
+                Waktu server saat ini: {currentTime.toLocaleString('id-ID')}
+             </div>
+        )}
       </div>
     );
   }
@@ -152,6 +228,30 @@ const RegistrationForm: React.FC<RegistrationFormProps> = ({ onSuccess }) => {
         </h2>
         <p className="text-emerald-50 text-sm mt-1">Daftarkan diri Anda ke dalam kelompok. Data tersimpan Online.</p>
       </div>
+      
+      {/* BANNER JADWAL / FORCE OPEN */}
+      {isForced ? (
+         <div className="bg-purple-50 border-b border-purple-100 px-6 py-4 flex items-start gap-3">
+             <Zap className="w-5 h-5 text-purple-600 mt-0.5 shrink-0 fill-current" />
+             <div className="text-sm text-purple-800">
+                <p className="font-bold mb-1">Mode Buka Paksa Aktif</p>
+                <p className="leading-relaxed">
+                    Pendaftaran dibuka manual oleh Admin (Mengabaikan jadwal).
+                </p>
+             </div>
+         </div>
+      ) : (
+         <div className="bg-blue-50 border-b border-blue-100 px-6 py-4 flex items-start gap-3">
+            <Info className="w-5 h-5 text-blue-600 mt-0.5 shrink-0" />
+            <div className="text-sm text-blue-800">
+               <p className="font-bold mb-1">Jadwal Pendaftaran:</p>
+               <p className="leading-relaxed">
+                   Buka: Kamis, 08 Januari 2026 (13.00) <br/>
+                   Tutup: Jum'at, 09 Januari 2026 (23.59)
+               </p>
+            </div>
+         </div>
+      )}
 
       <form onSubmit={handleSubmit} className="p-6 space-y-6">
         {error && (

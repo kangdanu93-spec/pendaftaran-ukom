@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { GroupRegistration, AdminUser, SystemSettings } from '../types';
 import { subscribeToRegistrations, deleteRegistration, updateRegistration, subscribeToSettings, updateSystemSettings } from '../services/storageService';
-import { Users, Trash2, Phone, School, LogOut, FileSpreadsheet, Database, Shield, GraduationCap, Check, Lock, Unlock, Search, X, Edit, PieChart, BarChart3, Save, Printer } from 'lucide-react';
+import { Users, Trash2, Phone, School, LogOut, FileSpreadsheet, Database, Shield, GraduationCap, Check, Lock, Unlock, Search, X, Edit, PieChart, BarChart3, Save, Printer, Zap } from 'lucide-react';
 import UserManagement from './UserManagement';
 
 interface GroupListProps {
@@ -13,7 +13,7 @@ const GroupList: React.FC<GroupListProps> = ({ currentUser, onLogout }) => {
   const [registrations, setRegistrations] = useState<GroupRegistration[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [showUserManagement, setShowUserManagement] = useState(false);
-  const [settings, setSettings] = useState<SystemSettings>({ isRegistrationOpen: true });
+  const [settings, setSettings] = useState<SystemSettings>({ isRegistrationOpen: true, forceOpen: false });
   
   // Search State
   const [searchTerm, setSearchTerm] = useState('');
@@ -100,7 +100,7 @@ const GroupList: React.FC<GroupListProps> = ({ currentUser, onLogout }) => {
             whatsapp: editForm.whatsapp,
             gender: editForm.gender,
             className: editForm.className,
-            teamName: editForm.teamName
+            teamName: editForm.teamName // Now accepts manual string
         });
         setStudentToEdit(null);
     } catch (error) {
@@ -117,6 +117,20 @@ const GroupList: React.FC<GroupListProps> = ({ currentUser, onLogout }) => {
       await updateSystemSettings({ isRegistrationOpen: !settings.isRegistrationOpen });
     } catch (e) {
       alert("Gagal mengubah status pendaftaran.");
+    }
+  };
+
+  const toggleForceOpen = async () => {
+    try {
+      const newValue = !settings.forceOpen;
+      await updateSystemSettings({ forceOpen: newValue });
+      if (newValue) {
+          alert("Mode Buka Paksa DIAKTIFKAN. Formulir akan terbuka meskipun jadwal sudah habis.");
+      } else {
+          alert("Mode Buka Paksa DINONAKTIFKAN. Formulir mengikuti jadwal otomatis.");
+      }
+    } catch (e) {
+      alert("Gagal mengubah status Force Open.");
     }
   };
 
@@ -285,13 +299,18 @@ const GroupList: React.FC<GroupListProps> = ({ currentUser, onLogout }) => {
                     <div className="grid grid-cols-2 gap-4">
                          <div>
                             <label className="block text-xs font-semibold text-gray-500 uppercase mb-1">Kelompok</label>
-                            <select 
+                            {/* UPDATE: Manual Input for Team Name with Datalist */}
+                            <input 
+                                type="text" 
+                                list="teamNameOptions"
                                 value={editForm.teamName}
                                 onChange={(e) => setEditForm({...editForm, teamName: e.target.value})}
-                                className="w-full border rounded-lg px-3 py-2 bg-white"
-                            >
-                                {groupNumbers.map(n => <option key={n} value={`Kelompok ${n}`}>Kelompok {n}</option>)}
-                            </select>
+                                className="w-full border rounded-lg px-3 py-2 bg-white focus:ring-2 focus:ring-emerald-500 outline-none"
+                                placeholder="Nama Kelompok"
+                            />
+                            <datalist id="teamNameOptions">
+                                {groupNumbers.map(n => <option key={n} value={`Kelompok ${n}`} />)}
+                            </datalist>
                         </div>
                          <div>
                             <label className="block text-xs font-semibold text-gray-500 uppercase mb-1">WhatsApp</label>
@@ -372,8 +391,22 @@ const GroupList: React.FC<GroupListProps> = ({ currentUser, onLogout }) => {
                  </button>
                )}
             </div>
+            
+            {/* BUTTON: FORCE OPEN (BUKA PAKSA) */}
+            <button 
+                onClick={toggleForceOpen} 
+                className={`px-3 py-2.5 rounded-xl text-sm font-bold transition-all flex items-center gap-2 border ${settings.forceOpen ? 'bg-purple-100 text-purple-700 border-purple-300 ring-2 ring-purple-200' : 'bg-gray-50 text-gray-500 border-gray-200 hover:bg-purple-50 hover:text-purple-600'}`}
+                title="Buka Paksa (Abaikan Jadwal)"
+            >
+                <Zap className={`w-4 h-4 ${settings.forceOpen ? 'fill-current' : ''}`} />
+            </button>
 
-            <button onClick={toggleRegistrationStatus} className={`px-3 py-2.5 rounded-xl text-sm font-bold transition-all flex items-center gap-2 border ${settings.isRegistrationOpen ? 'bg-blue-50 text-blue-700 border-blue-200' : 'bg-red-50 text-red-700 border-red-200'}`}>
+            {/* BUTTON: TOGGLE SCHEDULE ACTIVE/INACTIVE */}
+            <button 
+                onClick={toggleRegistrationStatus} 
+                className={`px-3 py-2.5 rounded-xl text-sm font-bold transition-all flex items-center gap-2 border ${settings.isRegistrationOpen ? 'bg-blue-50 text-blue-700 border-blue-200' : 'bg-red-50 text-red-700 border-red-200'}`}
+                title={settings.isRegistrationOpen ? "Sistem Aktif (Mengikuti Jadwal)" : "Sistem Nonaktif (Tutup Total)"}
+            >
               {settings.isRegistrationOpen ? <Unlock className="w-4 h-4" /> : <Lock className="w-4 h-4" />}
             </button>
 
@@ -492,116 +525,142 @@ const GroupList: React.FC<GroupListProps> = ({ currentUser, onLogout }) => {
                 </div>
              </div>
           ) : (
-            // NORMAL VIEW (GROUP CARDS)
-            classes.map(className => (
-                <div key={className} className="animate-fade-in break-inside-avoid print:break-before-auto">
-                <div className="flex items-center gap-3 mb-6 pb-2 border-b-2 border-emerald-100 print:border-emerald-600 print:mb-4">
-                    <div className="bg-emerald-100 p-2 rounded-lg print:hidden"><School className="w-6 h-6 text-emerald-700" /></div>
-                    <h2 className="text-2xl font-bold text-gray-800 print:text-emerald-800 print:text-xl">Kelas {className}</h2>
-                </div>
+            // NORMAL VIEW (GROUP CARDS) - Updated to handle custom team names
+            classes.map(className => {
+                // Collect all unique team names for this class
+                const existingTeams = new Set<string>(registrations.filter(r => r.className === className).map(r => r.teamName));
                 
-                {/* 
-                   GRID LAYOUT KHUSUS PRINT:
-                   print:grid-cols-2 -> Membagi jadi 2 kolom di A4
-                   print:gap-4 -> Mengurangi jarak antar kartu agar muat
-                */}
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 print:grid-cols-2 print:gap-4 print:block print:columns-2">
-                    {groupNumbers.map(num => {
-                    const teamName = `Kelompok ${num}`;
-                    const teamMembers = registrations.filter(r => r.className === className && r.teamName === teamName);
-                    const limit = num === 6 ? 7 : 6;
-                    const isFull = teamMembers.length >= limit;
-                    const isEmpty = teamMembers.length === 0;
+                // Merge with standard groups (1-6)
+                const allTeamsSet = new Set<string>([...groupNumbers.map(n => `Kelompok ${n}`), ...Array.from(existingTeams)]);
+                
+                // Sort logically: Groups with numbers first, then others alphabetical
+                const sortedTeams = Array.from(allTeamsSet).sort((a: string, b: string) => {
+                    const matchA = a.match(/Kelompok (\d+)/i);
+                    const matchB = b.match(/Kelompok (\d+)/i);
+                    
+                    if (matchA && matchB) {
+                        return parseInt(matchA[1]) - parseInt(matchB[1]);
+                    }
+                    if (matchA) return -1; // Standard groups first
+                    if (matchB) return 1;
+                    return a.localeCompare(b);
+                });
 
-                    // Jangan print kelompok kosong
-                    if (isEmpty) return (
-                         <div key={teamName} className="hidden print:hidden bg-white rounded-2xl shadow-sm border border-gray-200 p-5 flex flex-col items-center justify-center text-gray-400">
-                             <span className="text-sm italic opacity-60">Belum ada anggota</span>
-                        </div>
-                    );
-
-                    return (
-                        <div key={teamName} className={`bg-white rounded-2xl shadow-sm border transition-all duration-300 break-inside-avoid page-break-inside-avoid mb-6 print:mb-4 print:shadow-none print:border-2 ${isFull ? 'border-orange-200 print:border-orange-300' : 'border-gray-200 print:border-emerald-200'}`}>
-                        {/* Card Header Berwarna */}
-                        <div className={`px-5 py-4 border-b flex justify-between items-center print:py-2 ${isFull ? 'bg-gradient-to-r from-orange-50 to-white print:bg-orange-100 print:from-orange-100' : 'bg-gradient-to-r from-emerald-50/50 to-white print:bg-emerald-100 print:from-emerald-100'}`}>
-                            <h3 className={`font-bold ${isFull ? 'text-orange-800' : 'text-gray-800'} print:text-black print:text-base`}>{teamName}</h3>
-                            <span className={`text-xs px-2.5 py-1 rounded-full font-bold shadow-sm print:border print:border-black/10 ${isFull ? 'bg-orange-100 text-orange-700 print:bg-white' : 'bg-emerald-100 text-emerald-700 print:bg-white'}`}>
-                            {teamMembers.length} / {limit}
-                            </span>
-                        </div>
+                return (
+                    <div key={className} className="animate-fade-in break-inside-avoid print:break-before-auto">
+                    <div className="flex items-center gap-3 mb-6 pb-2 border-b-2 border-emerald-100 print:border-emerald-600 print:mb-4">
+                        <div className="bg-emerald-100 p-2 rounded-lg print:hidden"><School className="w-6 h-6 text-emerald-700" /></div>
+                        <h2 className="text-2xl font-bold text-gray-800 print:text-emerald-800 print:text-xl">Kelas {className}</h2>
+                    </div>
+                    
+                    {/* 
+                    GRID LAYOUT KHUSUS PRINT:
+                    print:grid-cols-2 -> Membagi jadi 2 kolom di A4
+                    print:gap-4 -> Mengurangi jarak antar kartu agar muat
+                    */}
+                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 print:grid-cols-2 print:gap-4 print:block print:columns-2">
+                        {sortedTeams.map((teamName: string) => {
+                        const teamMembers = registrations.filter(r => r.className === className && r.teamName === teamName);
                         
-                        {/* Card Body */}
-                        <div className="p-5 min-h-[160px] print:min-h-0 print:p-3">
-                            {teamMembers.length > 0 ? (
-                            <ul className="space-y-4 print:space-y-1">
-                                {teamMembers.map((member, idx) => {
-                                    const isSaving = savingScoreId === member.id;
-                                    const currentInputValue = tempScores[member.id] !== undefined ? tempScores[member.id] : (member.score?.toString() || '');
-                                    
-                                    return (
-                                    <li key={member.id} className="flex flex-col gap-1 text-sm group border-b border-gray-50 pb-2 last:border-0 last:pb-0 print:border-gray-100">
-                                        <div className="flex justify-between items-start">
-                                            <div className="flex items-start gap-3 w-full">
-                                            <span className="text-gray-400 w-4 font-mono text-right flex-shrink-0 pt-0.5 print:text-black/60">{idx + 1}.</span>
-                                            <div className="w-full">
-                                                <div className="flex justify-between w-full">
-                                                    <span className="font-semibold text-gray-700 flex items-center gap-2 print:text-black">
-                                                        {member.studentName}
-                                                        {/* Gender Badge Color di Print */}
-                                                        <span className={`text-[10px] px-1.5 py-0.5 rounded font-bold print:border print:border-gray-200 ${member.gender === 'Laki-laki' ? 'bg-blue-100 text-blue-700 print:bg-blue-50' : 'bg-pink-100 text-pink-700 print:bg-pink-50'}`}>{member.gender === 'Laki-laki' ? 'L' : 'P'}</span>
-                                                    </span>
-                                                    
-                                                    {/* TOMBOL ACTION - HIDE ON PRINT */}
-                                                    {!isGradingMode && (
-                                                        <div className="flex gap-1 print:hidden opacity-0 group-hover:opacity-100 transition-opacity">
-                                                            <button onClick={() => initiateEdit(member)} className="text-gray-400 hover:text-amber-500 hover:bg-amber-50 p-1 rounded" title="Edit Data"><Edit className="w-3.5 h-3.5" /></button>
-                                                            <button onClick={() => initiateDelete(member)} className="text-gray-400 hover:text-red-500 hover:bg-red-50 p-1 rounded" title="Hapus Siswa"><Trash2 className="w-3.5 h-3.5" /></button>
-                                                        </div>
-                                                    )}
-                                                </div>
-                                                
-                                                <div className="flex justify-between items-end mt-1">
-                                                    <span className="text-[11px] text-emerald-600 bg-emerald-50 px-1.5 py-0.5 rounded flex items-center gap-1 w-fit print:hidden">
-                                                        <Phone className="w-3 h-3" /> {member.whatsapp}
-                                                    </span>
+                        // Determine limit (Default 6 for custom/others, 7 for Kelompok 6)
+                        const match = teamName.match(/Kelompok (\d+)/i);
+                        const groupNum = match ? parseInt(match[1]) : 0;
+                        const limit = groupNum === 6 ? 7 : 6;
+                        
+                        const isFull = teamMembers.length >= limit;
+                        const isEmpty = teamMembers.length === 0;
 
-                                                    {/* SCORE DISPLAY / INPUT */}
-                                                    <div className="flex items-center">
-                                                        {isGradingMode ? (
-                                                            <div className="flex items-center gap-1 print:hidden">
-                                                                <input type="text" className="w-12 h-8 text-center border border-gray-300 rounded focus:border-emerald-500 focus:ring-1 focus:ring-emerald-500 text-sm font-bold" placeholder="0" value={currentInputValue} onChange={(e) => handleScoreChange(member.id, e.target.value)} onKeyDown={(e) => {if (e.key === 'Enter') handleSaveScore(member.id);}} />
-                                                                <button onClick={() => handleSaveScore(member.id)} disabled={isSaving} className="w-8 h-8 flex items-center justify-center bg-emerald-100 text-emerald-700 rounded hover:bg-emerald-200 transition-colors">
-                                                                    {isSaving ? <span className="w-3 h-3 border-2 border-emerald-600 border-t-transparent rounded-full animate-spin"></span> : <Check className="w-4 h-4" />}
-                                                                </button>
-                                                            </div>
-                                                        ) : (
-                                                            member.score !== undefined ? (
-                                                                // Nilai Berwarna saat Print
-                                                                <span className={`text-xs font-bold px-2 py-1 rounded border print:border-gray-300 ${member.score >= 75 ? 'bg-green-100 text-green-700 border-green-200 print:bg-green-50' : 'bg-red-100 text-red-700 border-red-200 print:bg-red-50'}`}>Nilai: {member.score}</span>
-                                                            ) : (<span className="text-[10px] text-gray-400 italic print:hidden">Belum dinilai</span>)
-                                                        )}
-                                                    </div>
-                                                </div>
-                                            </div>
-                                            </div>
-                                        </div>
-                                    </li>
-                                    );
-                                })}
-                            </ul>
-                            ) : (
-                            <div className="h-full flex flex-col items-center justify-center text-gray-400 print:hidden">
-                                <Users className="w-8 h-8 mb-2 opacity-20" />
+                        // Jangan print kelompok kosong
+                        if (isEmpty) return (
+                            <div key={teamName} className="hidden print:hidden bg-white rounded-2xl shadow-sm border border-gray-200 p-5 flex flex-col items-center justify-center text-gray-400">
+                                <h3 className="font-bold text-gray-300 mb-1">{teamName}</h3>
                                 <span className="text-sm italic opacity-60">Belum ada anggota</span>
                             </div>
-                            )}
-                        </div>
-                        </div>
-                    );
-                    })}
-                </div>
-                </div>
-            ))
+                        );
+
+                        return (
+                            <div key={teamName} className={`bg-white rounded-2xl shadow-sm border transition-all duration-300 break-inside-avoid page-break-inside-avoid mb-6 print:mb-4 print:shadow-none print:border-2 ${isFull ? 'border-orange-200 print:border-orange-300' : 'border-gray-200 print:border-emerald-200'}`}>
+                            {/* Card Header Berwarna */}
+                            <div className={`px-5 py-4 border-b flex justify-between items-center print:py-2 ${isFull ? 'bg-gradient-to-r from-orange-50 to-white print:bg-orange-100 print:from-orange-100' : 'bg-gradient-to-r from-emerald-50/50 to-white print:bg-emerald-100 print:from-emerald-100'}`}>
+                                <h3 className={`font-bold ${isFull ? 'text-orange-800' : 'text-gray-800'} print:text-black print:text-base`}>{teamName}</h3>
+                                <span className={`text-xs px-2.5 py-1 rounded-full font-bold shadow-sm print:border print:border-black/10 ${isFull ? 'bg-orange-100 text-orange-700 print:bg-white' : 'bg-emerald-100 text-emerald-700 print:bg-white'}`}>
+                                {teamMembers.length} / {limit}
+                                </span>
+                            </div>
+                            
+                            {/* Card Body */}
+                            <div className="p-5 min-h-[160px] print:min-h-0 print:p-3">
+                                {teamMembers.length > 0 ? (
+                                <ul className="space-y-4 print:space-y-1">
+                                    {teamMembers.map((member, idx) => {
+                                        const isSaving = savingScoreId === member.id;
+                                        const currentInputValue = tempScores[member.id] !== undefined ? tempScores[member.id] : (member.score?.toString() || '');
+                                        
+                                        return (
+                                        <li key={member.id} className="flex flex-col gap-1 text-sm group border-b border-gray-50 pb-2 last:border-0 last:pb-0 print:border-gray-100">
+                                            <div className="flex justify-between items-start">
+                                                <div className="flex items-start gap-3 w-full">
+                                                <span className="text-gray-400 w-4 font-mono text-right flex-shrink-0 pt-0.5 print:text-black/60">{idx + 1}.</span>
+                                                <div className="w-full">
+                                                    <div className="flex justify-between w-full">
+                                                        <span className="font-semibold text-gray-700 flex items-center gap-2 print:text-black">
+                                                            {member.studentName}
+                                                            {/* Gender Badge Color di Print */}
+                                                            <span className={`text-[10px] px-1.5 py-0.5 rounded font-bold print:border print:border-gray-200 ${member.gender === 'Laki-laki' ? 'bg-blue-100 text-blue-700 print:bg-blue-50' : 'bg-pink-100 text-pink-700 print:bg-pink-50'}`}>{member.gender === 'Laki-laki' ? 'L' : 'P'}</span>
+                                                        </span>
+                                                        
+                                                        {/* TOMBOL ACTION - HIDE ON PRINT */}
+                                                        {!isGradingMode && (
+                                                            <div className="flex gap-1 print:hidden opacity-0 group-hover:opacity-100 transition-opacity">
+                                                                <button onClick={() => initiateEdit(member)} className="text-gray-400 hover:text-amber-500 hover:bg-amber-50 p-1 rounded" title="Edit Data"><Edit className="w-3.5 h-3.5" /></button>
+                                                                <button onClick={() => initiateDelete(member)} className="text-gray-400 hover:text-red-500 hover:bg-red-50 p-1 rounded" title="Hapus Siswa"><Trash2 className="w-3.5 h-3.5" /></button>
+                                                            </div>
+                                                        )}
+                                                    </div>
+                                                    
+                                                    <div className="flex justify-between items-end mt-1">
+                                                        <span className="text-[11px] text-emerald-600 bg-emerald-50 px-1.5 py-0.5 rounded flex items-center gap-1 w-fit print:hidden">
+                                                            <Phone className="w-3 h-3" /> {member.whatsapp}
+                                                        </span>
+
+                                                        {/* SCORE DISPLAY / INPUT */}
+                                                        <div className="flex items-center">
+                                                            {isGradingMode ? (
+                                                                <div className="flex items-center gap-1 print:hidden">
+                                                                    <input type="text" className="w-12 h-8 text-center border border-gray-300 rounded focus:border-emerald-500 focus:ring-1 focus:ring-emerald-500 text-sm font-bold" placeholder="0" value={currentInputValue} onChange={(e) => handleScoreChange(member.id, e.target.value)} onKeyDown={(e) => {if (e.key === 'Enter') handleSaveScore(member.id);}} />
+                                                                    <button onClick={() => handleSaveScore(member.id)} disabled={isSaving} className="w-8 h-8 flex items-center justify-center bg-emerald-100 text-emerald-700 rounded hover:bg-emerald-200 transition-colors">
+                                                                        {isSaving ? <span className="w-3 h-3 border-2 border-emerald-600 border-t-transparent rounded-full animate-spin"></span> : <Check className="w-4 h-4" />}
+                                                                    </button>
+                                                                </div>
+                                                            ) : (
+                                                                member.score !== undefined ? (
+                                                                    // Nilai Berwarna saat Print
+                                                                    <span className={`text-xs font-bold px-2 py-1 rounded border print:border-gray-300 ${member.score >= 75 ? 'bg-green-100 text-green-700 border-green-200 print:bg-green-50' : 'bg-red-100 text-red-700 border-red-200 print:bg-red-50'}`}>Nilai: {member.score}</span>
+                                                                ) : (<span className="text-[10px] text-gray-400 italic print:hidden">Belum dinilai</span>)
+                                                            )}
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                </div>
+                                            </div>
+                                        </li>
+                                        );
+                                    })}
+                                </ul>
+                                ) : (
+                                <div className="h-full flex flex-col items-center justify-center text-gray-400 print:hidden">
+                                    <Users className="w-8 h-8 mb-2 opacity-20" />
+                                    <span className="text-sm italic opacity-60">Belum ada anggota</span>
+                                </div>
+                                )}
+                            </div>
+                            </div>
+                        );
+                        })}
+                    </div>
+                    </div>
+                );
+            })
           )}
 
           {/* TANDA TANGAN (Hanya Muncul di Halaman Terakhir Print) */}
