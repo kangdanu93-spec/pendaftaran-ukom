@@ -5,8 +5,9 @@ import GroupList from './components/GroupList';
 import LoginForm from './components/LoginForm';
 import StudentStatusCheck from './components/StudentStatusCheck';
 import PublicGroupView from './components/PublicGroupView';
+import WorkflowGuide from './components/WorkflowGuide';
 import { ViewState, AdminUser } from './types';
-import { ClipboardList, ArrowRight, MessageCircle, List } from 'lucide-react';
+import { ClipboardList, ArrowRight, MessageCircle, List, Briefcase } from 'lucide-react';
 
 const App: React.FC = () => {
   const [currentView, setCurrentView] = useState<ViewState>(ViewState.HOME);
@@ -63,6 +64,8 @@ const App: React.FC = () => {
           return <StudentStatusCheck />;
       case ViewState.PUBLIC_LIST:
           return <PublicGroupView />;
+      case ViewState.WORKFLOW:
+          return <WorkflowGuide />;
       case ViewState.LIST:
         if (!currentUser) {
           return <LoginForm onLogin={(user) => setCurrentUser(user)} />;
@@ -89,10 +92,10 @@ const App: React.FC = () => {
                   Daftar Sekarang <ArrowRight className="w-5 h-5" />
                 </button>
                 <button 
-                  onClick={() => setCurrentView(ViewState.PUBLIC_LIST)}
-                  className="px-8 py-4 bg-blue-50 text-blue-700 border border-blue-100 rounded-xl font-bold text-lg shadow-sm hover:bg-blue-100 transition-all flex items-center gap-2"
+                  onClick={() => setCurrentView(ViewState.WORKFLOW)}
+                  className="px-8 py-4 bg-white text-gray-700 border border-gray-200 rounded-xl font-bold text-lg shadow-sm hover:border-emerald-500 hover:text-emerald-600 transition-all flex items-center gap-2"
                 >
-                   <List className="w-5 h-5" /> Lihat Kelompok
+                   <Briefcase className="w-5 h-5" /> Alur & Jobdesk
                 </button>
               </div>
             </div>

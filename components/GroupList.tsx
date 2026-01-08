@@ -608,7 +608,7 @@ const GroupList: React.FC<GroupListProps> = ({ currentUser, onLogout }) => {
           <div className="hidden print:flex justify-between mt-12 px-8 break-inside-avoid page-break-inside-avoid">
             <div className="text-center w-1/3">
                <p className="mb-20 text-black text-sm">Mengetahui,<br/>Kepala Sekolah</p>
-               <p className="font-bold underline text-black text-sm">Siti Komalia, S.Farm</p>
+               <p className="font-bold underline text-black text-sm">H. ABDUL MUKTI, S.Pd.I</p>
                <p className="text-black text-xs">NIP. 19650421 199003 1 008</p>
             </div>
              <div className="text-center w-1/3">

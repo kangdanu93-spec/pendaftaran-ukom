@@ -1,6 +1,6 @@
 import React from 'react';
 import { ViewState } from '../types';
-import { Layout, Users, FileText, SearchCheck, List } from 'lucide-react';
+import { Layout, Users, FileText, SearchCheck, List, Briefcase } from 'lucide-react';
 
 interface NavbarProps {
   currentView: ViewState;
@@ -10,6 +10,7 @@ interface NavbarProps {
 const Navbar: React.FC<NavbarProps> = ({ currentView, setView }) => {
   const navItems = [
     { view: ViewState.HOME, label: 'Beranda', icon: <Layout className="w-5 h-5" /> },
+    { view: ViewState.WORKFLOW, label: 'Alur & Jobdesk', icon: <Briefcase className="w-5 h-5" /> },
     { view: ViewState.FORM, label: 'Daftar', icon: <FileText className="w-5 h-5" /> },
     { view: ViewState.PUBLIC_LIST, label: 'Lihat Kelompok', icon: <List className="w-5 h-5" /> },
     { view: ViewState.CHECK_STATUS, label: 'Cek Nilai', icon: <SearchCheck className="w-5 h-5" /> },
@@ -53,17 +54,17 @@ const Navbar: React.FC<NavbarProps> = ({ currentView, setView }) => {
       </div>
       
       {/* Mobile Bottom Bar for basic nav */}
-      <div className="sm:hidden fixed bottom-0 left-0 w-full bg-white border-t border-gray-200 flex justify-around py-3 z-50">
+      <div className="sm:hidden fixed bottom-0 left-0 w-full bg-white border-t border-gray-200 flex justify-around py-3 z-50 overflow-x-auto">
          {navItems.map((item) => (
               <button
                 key={item.view}
                 onClick={() => setView(item.view)}
-                className={`flex flex-col items-center ${
+                className={`flex flex-col items-center flex-shrink-0 px-2 ${
                   currentView === item.view ? 'text-emerald-600' : 'text-gray-400'
                 }`}
               >
                 {item.icon}
-                <span className="text-[10px] mt-1 text-center leading-tight max-w-[60px]">{item.label}</span>
+                <span className="text-[10px] mt-1 text-center leading-tight max-w-[60px] whitespace-nowrap">{item.label}</span>
               </button>
             ))}
       </div>
