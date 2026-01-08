@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { GroupRegistration, SystemSettings } from '../types';
 import { saveRegistration, checkGroupAvailability, subscribeToRegistrations, checkDuplicateStudent, subscribeToSettings } from '../services/storageService';
-import { Loader2, Save, FileText, User, School, Phone, Users, AlertCircle, Lock, Calendar, Clock, Info, Zap } from 'lucide-react';
+import { Loader2, Save, FileText, User, School, Phone, Users, AlertCircle, Lock, Clock, Info, Zap } from 'lucide-react';
 
 interface RegistrationFormProps {
   onSuccess: () => void;
