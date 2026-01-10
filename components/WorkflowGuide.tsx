@@ -1,5 +1,5 @@
 import React from 'react';
-import { Clapperboard, Film, MonitorPlay, PlayCircle, FolderOutput, UserCog, Camera, Edit3, Mic2, ClipboardList, Presentation, FolderOpen, FileImage, FileText, Clock, Timer, Scissors, Save } from 'lucide-react';
+import { Film, MonitorPlay, PlayCircle, FolderOutput, UserCog, Edit3, ClipboardList, Presentation, FolderOpen, FileImage, FileText, Scissors, Save, Lightbulb, Target, Sparkles } from 'lucide-react';
 
 const WorkflowGuide: React.FC = () => {
   
@@ -13,11 +13,10 @@ const WorkflowGuide: React.FC = () => {
       border: "border-rose-200",
       accent: "bg-rose-500",
       items: [
-        "Audio Mentah",
-        "Video Performance",
         "Video Adegan",
         "Storyboard (.doc)",
-        "Asset Grafis"
+        "Naskah Film (.doc)",
+        "Asset Gambar (Cover & Poster)"
       ]
     },
     {
@@ -112,54 +111,6 @@ const WorkflowGuide: React.FC = () => {
     }
   ];
 
-  const openingSessionTasks = [
-    { role: "Ketua", task: "Brief singkat, Membagi sesi kerja" },
-    { role: "Editor", task: "Setup project editing" },
-    { role: "Audio", task: "Setup project audio" },
-    { role: "Konseptor", task: "Cek kesesuaian storytelling" },
-    { role: "Kameraman", task: "Menyeleksi footage terbaik" },
-    { role: "Aktor", task: "Menentukan ekspresi adegan" },
-    { role: "Dokumentator", task: "Foto & catat proses (Bukti UKOM)" }
-  ];
-
-  const session2Tasks = [
-    { role: "Ketua", task: "Mengawasi alur" },
-    { role: "Editor", task: "Import semua file" },
-    { role: "Audio", task: "Set audio ke timeline" },
-    { role: "Kameraman", task: "Pilih shot terbaik" },
-    { role: "Konseptor", task: "Cocokkan storyboard" },
-    { role: "Aktor", task: "Pilih adegan ekspresif" },
-    { role: "Dokumentator", task: "Foto & catat" }
-  ];
-
-  const session3Tasks = [
-    { role: "Editor", task: "Potong, transisi, sinkron" },
-    { role: "Audio", task: "Cek volume & clarity" },
-    { role: "Konseptor", task: "Jaga alur cerita" },
-    { role: "Kameraman", task: "Saran angle & cut" },
-    { role: "Aktor", task: "Koreksi ekspresi" },
-    { role: "Ketua", task: "Kontrol waktu" },
-    { role: "Dokumentator", task: "Dokumentasi proses" }
-  ];
-
-  const session4Tasks = [
-    { role: "Editor", task: "Tambah judul & credit" },
-    { role: "Ketua", task: "Cek kesesuaian UKOM" },
-    { role: "Editor & Audio", task: "Final check (Preview)" },
-    { role: "Anggota Lain", task: "Checklist penilaian" },
-    { role: "Editor", task: "Export video final" }
-  ];
-
-  const session5Tasks = [
-    { role: "Ketua", task: "Ringkasan proyek" },
-    { role: "Konseptor", task: "Storytelling" },
-    { role: "Audio", task: "Proses audio" },
-    { role: "Editor", task: "Proses editing" },
-    { role: "Kameraman", task: "Teknik pengambilan" },
-    { role: "Aktor", task: "Ekspresi & adegan" },
-    { role: "Dokumentator", task: "Bukti kerja" }
-  ];
-
   const jobDesks = [
     {
       role: "Ketua",
@@ -167,57 +118,108 @@ const WorkflowGuide: React.FC = () => {
       bg: "bg-emerald-50",
       border: "border-emerald-100",
       hover: "hover:border-emerald-400",
-      desc: "Bertanggung jawab memimpin kelompok, membagi tugas, mengambil keputusan, dan memastikan target waktu tercapai."
+      desc: "Bertanggung jawab memimpin kelompok, membagi tugas, mengambil keputusan, dan memastikan target waktu tercapai serta Mendokumentasikan kegiatan berbentuk foto dan catatan laporan setiap proses produksi di ketik dan di print. (1 Orang)"
     },
     {
-      role: "Editor Video",
+      role: "Editor Audio & Video",
       icon: <Film className="w-8 h-8 text-green-600" />,
       bg: "bg-green-50",
       border: "border-green-100",
       hover: "hover:border-green-400",
-      desc: "Melakukan proses editing visual (offline/online), transisi, color grading, dan rendering hasil akhir (export)."
+      desc: "Melakukan proses editing visual (offline), transisi, color grading, musik, efek suara,caption dan rendering hasil akhir (export). (2 Orang)"
     },
     {
-      role: "Editor Audio",
-      icon: <Mic2 className="w-8 h-8 text-sky-600" />,
-      bg: "bg-sky-50",
-      border: "border-sky-100",
-      hover: "hover:border-sky-400",
-      desc: "Melakukan processing audio, cleaning noise, mixing, serta menambahkan BGM dan SFX agar suara jernih."
-    },
-    {
-      role: "Konseptor (Pembuat Storyboard)",
+      role: "Konseptor",
       icon: <Edit3 className="w-8 h-8 text-teal-600" />,
       bg: "bg-teal-50",
       border: "border-teal-100",
       hover: "hover:border-teal-400",
-      desc: "Menyusun ide cerita, membuat naskah, dan menggambar storyboard sebagai panduan utama saat produksi."
+      desc: "Menyusun ide cerita, membuat naskah, dan menggambar storyboard sebagai panduan utama saat produksi di ketik dan di print. (2 Orang)"
     },
     {
-      role: "Kameraman",
-      icon: <Camera className="w-8 h-8 text-cyan-600" />,
-      bg: "bg-cyan-50",
-      border: "border-cyan-100",
-      hover: "hover:border-cyan-400",
-      desc: "Bertugas mengambil gambar (syuting), mengatur komposisi (angle), framing, dan pencahayaan."
-    },
-    {
-      role: "Aktor/Desain Grafis",
-      icon: <Clapperboard className="w-8 h-8 text-indigo-600" />,
+      role: "Desain Grafis",
+      icon: <FileImage className="w-8 h-8 text-indigo-600" />,
       bg: "bg-indigo-50",
       border: "border-indigo-100",
       hover: "hover:border-indigo-400",
-      desc: "Berperan sebagai talent dalam video, sekaligus membuat desain cover, poster, dan aset grafis pendukung."
-    },
-    {
-      role: "Dokumentor",
-      icon: <FileImage className="w-8 h-8 text-rose-600" />,
-      bg: "bg-rose-50",
-      border: "border-rose-100",
-      hover: "hover:border-rose-400",
-      desc: "Mendokumentasikan kegiatan di balik layar (BTS) berupa foto/video dan mencatat laporan kendala produksi."
+      desc: "Berperan membuat desain cover, poster, dan aset grafis pendukung. (1 atau 2 orang)"
     }
   ];
+
+  const examThemes = [
+    {
+      category: "ILM Kesehatan",
+      title: "Ayo Cuci Tangan!",
+      color: "blue",
+      items: [
+        "Cuci tangan dengan sabun sebelum makan dan setelah beraktivitas.",
+        "Lindungi diri dan keluarga dari kuman dan penyakit."
+      ],
+      tagline: "Cuci tangan, langkah kecil untuk hidup sehat."
+    },
+    {
+      category: "ILM Pendidikan",
+      title: "Sekolah Itu Penting",
+      color: "amber",
+      items: [
+        "Pendidikan membuka jalan menuju masa depan yang lebih baik.",
+        "Jangan putus sekolah, raih cita-citamu!"
+      ],
+      tagline: "Belajar hari ini, sukses esok hari."
+    },
+    {
+      category: "ILM Lingkungan",
+      title: "Jangan Buang Sampah",
+      color: "emerald",
+      items: [
+        "Sampah yang dibuang sembarangan menyebabkan banjir dan penyakit.",
+        "Buang sampah pada tempatnya demi lingkungan bersih."
+      ],
+      tagline: "Lingkungan bersih, hidup pun bersih."
+    },
+    {
+      category: "ILM Lalu Lintas",
+      title: "Utamakan Keselamatan",
+      color: "red",
+      items: [
+        "Gunakan helm dan patuhi rambu lalu lintas.",
+        "Keselamatan lebih penting daripada kecepatan."
+      ],
+      tagline: "Pulang selamat adalah tujuan utama."
+    },
+    {
+      category: "ILM Anti Bullying",
+      title: "Stop Bullying!",
+      color: "violet",
+      items: [
+        "Bullying melukai hati dan masa depan.",
+        "Ayo saling menghargai dan peduli sesama."
+      ],
+      tagline: "Berani baik itu hebat."
+    },
+    {
+      category: "ILM Literasi Digital",
+      title: "Saring Sebelum Sharing",
+      color: "cyan",
+      items: [
+        "Jangan mudah percaya berita di internet.",
+        "Periksa kebenaran informasi sebelum membagikannya."
+      ],
+      tagline: "Cerdas bermedia sosial."
+    }
+  ];
+
+  const getColorClass = (color: string) => {
+    switch (color) {
+      case 'blue': return 'bg-blue-50 border-blue-200 text-blue-900';
+      case 'amber': return 'bg-amber-50 border-amber-200 text-amber-900';
+      case 'emerald': return 'bg-emerald-50 border-emerald-200 text-emerald-900';
+      case 'red': return 'bg-red-50 border-red-200 text-red-900';
+      case 'violet': return 'bg-violet-50 border-violet-200 text-violet-900';
+      case 'cyan': return 'bg-cyan-50 border-cyan-200 text-cyan-900';
+      default: return 'bg-gray-50 border-gray-200 text-gray-900';
+    }
+  };
 
   return (
     <div className="max-w-[90rem] mx-auto space-y-12 pb-16 animate-fade-in-up">
@@ -242,7 +244,7 @@ const WorkflowGuide: React.FC = () => {
          </div>
       </div>
 
-      {/* SECTION: FOLDER STRUCTURE - UPDATED TEXT */}
+      {/* SECTION: FOLDER STRUCTURE */}
       <div className="px-4">
         <div className="bg-amber-50 border border-amber-200 rounded-2xl p-8 shadow-sm">
            <div className="flex items-start gap-4 flex-col md:flex-row">
@@ -259,24 +261,10 @@ const WorkflowGuide: React.FC = () => {
                  <div className="bg-white rounded-xl border border-gray-200 p-6 shadow-inner font-mono text-sm md:text-base">
                     <div className="flex items-center gap-2 font-bold text-gray-800 mb-2">
                        <FolderOpen className="w-5 h-5 text-amber-500 fill-amber-500" />
-                       UKOM_KELOMPOK_[X]
+                       UKOM_KELOMPOK_[...]
                     </div>
                     <div className="ml-5 border-l-2 border-gray-300 pl-4 space-y-3">
                        
-                       <div className="group">
-                          <div className="flex items-center gap-2 text-gray-700 mb-1">
-                             <FolderOpen className="w-4 h-4 text-amber-500 fill-amber-500" />
-                             AUDIO
-                          </div>
-                       </div>
-                       
-                       <div className="group">
-                          <div className="flex items-center gap-2 text-gray-700 mb-1">
-                             <FolderOpen className="w-4 h-4 text-amber-500 fill-amber-500" />
-                             VIDEO_PERFORMANCE
-                          </div>
-                       </div>
-
                        <div className="group">
                           <div className="flex items-center gap-2 text-gray-700 mb-1">
                              <FolderOpen className="w-4 h-4 text-amber-500 fill-amber-500" />
@@ -286,15 +274,22 @@ const WorkflowGuide: React.FC = () => {
 
                        <div className="group">
                           <div className="flex items-center gap-2 text-gray-700 mb-1">
-                             <FolderOpen className="w-4 h-4 text-amber-500 fill-amber-500" />
-                             STORYBOARD
+                             <FileText className="w-4 h-4 text-blue-500" />
+                             STORYBOARD (.DOC)
+                          </div>
+                       </div>
+
+                       <div className="group">
+                          <div className="flex items-center gap-2 text-gray-700 mb-1">
+                             <FileText className="w-4 h-4 text-blue-500" />
+                             NASKAH_FILM (.DOC)
                           </div>
                        </div>
 
                        <div className="group">
                           <div className="flex items-center gap-2 text-gray-700 mb-1">
                              <FolderOpen className="w-4 h-4 text-amber-500 fill-amber-500" />
-                             ASSET GAMBAR (UNTUK COVER ATAU THUMBNAIL)
+                             ASSET_GAMBAR (UNTUK COVER & POSTER)
                           </div>
                        </div>
 
@@ -305,7 +300,63 @@ const WorkflowGuide: React.FC = () => {
         </div>
       </div>
 
-      {/* SECTION 2: JOB DESK - MOVED HERE AS REQUESTED */}
+      {/* SECTION: SOAL & TUGAS (NEW) */}
+      <div className="px-4">
+        <div className="bg-white border border-gray-200 rounded-3xl p-8 shadow-sm">
+           <div className="flex items-center gap-3 mb-6">
+              <Target className="w-8 h-8 text-rose-600" />
+              <h2 className="text-3xl font-bold text-gray-900">SOAL / TUGAS</h2>
+           </div>
+
+           <div className="bg-gray-900 text-white p-8 rounded-2xl text-center mb-8 relative overflow-hidden">
+               <div className="absolute top-0 right-0 p-4 opacity-10">
+                   <Film className="w-32 h-32 text-white" />
+               </div>
+               <h3 className="text-2xl md:text-3xl font-black mb-3 tracking-tight">
+                  Judul Tugas : Produksi Film Iklan Layanan Masyarakat
+               </h3>
+               <div className="inline-block bg-white/20 backdrop-blur-sm rounded-full px-6 py-2">
+                  <p className="text-lg md:text-xl font-bold text-emerald-300">
+                    (hasil karya berdurasi 3 menit)
+                  </p>
+               </div>
+           </div>
+
+           <div className="flex items-center gap-2 mb-6">
+               <Lightbulb className="w-6 h-6 text-amber-500" />
+               <h3 className="text-xl font-bold text-gray-800">Contoh Tema Tugas</h3>
+           </div>
+
+           <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
+               {examThemes.map((theme, idx) => (
+                   <div key={idx} className={`p-6 rounded-xl border ${getColorClass(theme.color)} hover:shadow-md transition-all`}>
+                       <div className="flex justify-between items-start mb-3">
+                           <span className="text-xs font-bold uppercase tracking-wider opacity-70 border border-current px-2 py-0.5 rounded-md">
+                               {theme.category}
+                           </span>
+                       </div>
+                       <h4 className="text-xl font-bold mb-3">{theme.title}</h4>
+                       
+                       <div className="space-y-2 mb-4 min-h-[80px]">
+                           {theme.items.map((item, i) => (
+                               <p key={i} className="text-sm leading-snug flex items-start gap-2">
+                                   <span className="mt-1.5 w-1.5 h-1.5 rounded-full bg-current opacity-60 shrink-0"></span>
+                                   {item}
+                               </p>
+                           ))}
+                       </div>
+                       
+                       <div className="bg-white/50 rounded-lg p-3 text-sm italic font-medium border border-current border-opacity-20 flex items-start gap-2">
+                           <Sparkles className="w-4 h-4 mt-0.5 shrink-0" />
+                           "{theme.tagline}"
+                       </div>
+                   </div>
+               ))}
+           </div>
+        </div>
+      </div>
+
+      {/* SECTION: JOB DESK */}
       <div className="px-4">
         <h2 className="text-2xl font-bold text-gray-800 mb-8 flex items-center gap-2">
             <UserCog className="w-7 h-7 text-emerald-600" /> Pembagian Tugas (Jobdesk)
@@ -328,7 +379,7 @@ const WorkflowGuide: React.FC = () => {
         </div>
       </div>
 
-      {/* SECTION 1: TIMELINE - MODERN FRESH */}
+      {/* SECTION: TIMELINE */}
       <div className="px-4">
           <h2 className="text-2xl font-bold text-gray-800 mb-8 flex items-center gap-2">
             <PlayCircle className="w-7 h-7 text-emerald-600" /> Timeline Hari H
@@ -374,182 +425,6 @@ const WorkflowGuide: React.FC = () => {
             </p>
           </div>
       </div>
-
-      {/* SECTION 1.5: ALL SESSIONS (1-6) - DISTINCTIVE COLORS */}
-      <div className="px-4 space-y-6">
-        
-        {/* SESI 1 - BLUE THEME */}
-        <div className="bg-white border-l-4 border-blue-500 rounded-r-xl shadow-sm p-6 md:p-8 relative overflow-hidden group hover:shadow-md transition-all">
-            <div className="relative z-10">
-                <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-6 border-b border-gray-100 pb-6">
-                    <div>
-                        <div className="flex items-center gap-2 mb-1">
-                            <span className="bg-blue-100 text-blue-800 text-xs font-bold px-2 py-1 rounded uppercase tracking-wider flex items-center gap-1"><Timer className="w-3 h-3" /> ±5–6 Jam</span>
-                            <span className="bg-gray-100 text-gray-600 text-xs font-bold px-2 py-1 rounded uppercase tracking-wider flex items-center gap-1"><Clock className="w-3 h-3" /> Sesi 1 (30 Menit)</span>
-                        </div>
-                        <h2 className="text-2xl font-bold text-gray-800 flex items-center gap-3 mt-2">
-                            <MonitorPlay className="w-7 h-7 text-blue-600" /> 
-                            Opening & Pembagian Tugas
-                        </h2>
-                        <p className="text-gray-500 mt-1">Tujuan: Memastikan semua anggota tim langsung bekerja secara paralel.</p>
-                    </div>
-                </div>
-
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-                    {openingSessionTasks.map((item, idx) => (
-                        <div key={idx} className="bg-blue-50/50 border border-blue-100 rounded-lg p-3 hover:bg-blue-100/50 transition-colors">
-                            <h3 className="font-bold text-gray-800 text-sm mb-1">{item.role}</h3>
-                            <p className="text-xs text-gray-500 leading-snug">{item.task}</p>
-                        </div>
-                    ))}
-                </div>
-            </div>
-        </div>
-
-        {/* SESI 2 - VIOLET THEME */}
-        <div className="bg-white border-l-4 border-violet-500 rounded-r-xl shadow-sm p-6 md:p-8 relative overflow-hidden group hover:shadow-md transition-all">
-            <div className="relative z-10">
-                <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-6 border-b border-gray-100 pb-6">
-                    <div>
-                         <div className="flex items-center gap-2 mb-1">
-                            <span className="bg-gray-100 text-gray-600 text-xs font-bold px-2 py-1 rounded uppercase tracking-wider flex items-center gap-1"><Clock className="w-3 h-3" /> Sesi 2 (60 Menit)</span>
-                        </div>
-                        <h2 className="text-2xl font-bold text-gray-800 flex items-center gap-3 mt-2">
-                            <FolderOpen className="w-7 h-7 text-violet-600" /> 
-                            Seleksi & Sorting Bahan
-                        </h2>
-                        <p className="text-gray-500 mt-1">Tujuan: Semua anggota pegang peran aktif dalam manajemen aset.</p>
-                    </div>
-                </div>
-
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-                     {session2Tasks.map((item, idx) => (
-                        <div key={idx} className="bg-violet-50/50 border border-violet-100 rounded-lg p-3 hover:bg-violet-100/50 transition-colors">
-                            <h3 className="font-bold text-gray-800 text-sm mb-1">{item.role}</h3>
-                            <p className="text-xs text-gray-500 leading-snug">{item.task}</p>
-                        </div>
-                    ))}
-                </div>
-            </div>
-        </div>
-
-        {/* SESI 3 - AMBER THEME */}
-        <div className="bg-white border-l-4 border-amber-500 rounded-r-xl shadow-sm p-6 md:p-8 relative overflow-hidden group hover:shadow-md transition-all">
-            <div className="relative z-10">
-                <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-6 border-b border-gray-100 pb-6">
-                    <div>
-                        <div className="flex items-center gap-2 mb-1">
-                            <span className="bg-gray-100 text-gray-600 text-xs font-bold px-2 py-1 rounded uppercase tracking-wider flex items-center gap-1"><Clock className="w-3 h-3" /> Sesi 3 (120 Menit)</span>
-                            <span className="bg-rose-100 text-rose-700 text-xs font-bold px-2 py-1 rounded uppercase tracking-wider flex items-center gap-1 border border-rose-200">🎯 Paling Krusial</span>
-                        </div>
-                        <h2 className="text-2xl font-bold text-gray-800 flex items-center gap-3 mt-2">
-                            <Scissors className="w-7 h-7 text-amber-600" /> 
-                            Editing Inti
-                        </h2>
-                        <p className="text-gray-500 mt-1">📌 Tidak ada yang diam → semua review aktif.</p>
-                    </div>
-                </div>
-
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-                    {session3Tasks.map((item, idx) => (
-                        <div key={idx} className="bg-amber-50/50 border border-amber-100 rounded-lg p-3 hover:bg-amber-100/50 transition-colors">
-                            <h3 className="font-bold text-gray-800 text-sm mb-1">{item.role}</h3>
-                            <p className="text-xs text-gray-500 leading-snug">{item.task}</p>
-                        </div>
-                    ))}
-                </div>
-            </div>
-        </div>
-
-        {/* SESI 4 - EMERALD THEME */}
-        <div className="bg-white border-l-4 border-emerald-500 rounded-r-xl shadow-sm p-6 md:p-8 relative overflow-hidden group hover:shadow-md transition-all">
-            <div className="relative z-10">
-                <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-6 border-b border-gray-100 pb-6">
-                    <div>
-                         <div className="flex items-center gap-2 mb-1">
-                            <span className="bg-gray-100 text-gray-600 text-xs font-bold px-2 py-1 rounded uppercase tracking-wider flex items-center gap-1"><Clock className="w-3 h-3" /> Sesi 4 (60 Menit)</span>
-                        </div>
-                        <h2 className="text-2xl font-bold text-gray-800 flex items-center gap-3 mt-2">
-                            <Save className="w-7 h-7 text-emerald-600" /> 
-                            Finalisasi & Export
-                        </h2>
-                        <p className="text-gray-500 mt-1">Output Akhir: 🎬 Video Final UKOM</p>
-                    </div>
-                </div>
-
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-4">
-                    {session4Tasks.map((item, idx) => (
-                        <div key={idx} className="bg-emerald-50/50 border border-emerald-100 rounded-lg p-3 hover:bg-emerald-100/50 transition-colors">
-                            <h3 className="font-bold text-gray-800 text-sm mb-1">{item.role}</h3>
-                            <p className="text-xs text-gray-500 leading-snug">{item.task}</p>
-                        </div>
-                    ))}
-                </div>
-            </div>
-        </div>
-
-        {/* SESI 5 - CYAN THEME */}
-        <div className="bg-white border-l-4 border-cyan-500 rounded-r-xl shadow-sm p-6 md:p-8 relative overflow-hidden group hover:shadow-md transition-all">
-            <div className="relative z-10">
-                <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-6 border-b border-gray-100 pb-6">
-                    <div>
-                        <div className="flex items-center gap-2 mb-1">
-                            <span className="bg-gray-100 text-gray-600 text-xs font-bold px-2 py-1 rounded uppercase tracking-wider flex items-center gap-1"><Clock className="w-3 h-3" /> Sesi 5 (45 Menit)</span>
-                            <span className="bg-cyan-100 text-cyan-700 text-xs font-bold px-2 py-1 rounded uppercase tracking-wider flex items-center gap-1 border border-cyan-200">Wajib Kontribusi</span>
-                        </div>
-                        <h2 className="text-2xl font-bold text-gray-800 flex items-center gap-3 mt-2">
-                            <FileText className="w-7 h-7 text-cyan-600" /> 
-                            Laporan & Persiapan Presentasi
-                        </h2>
-                        <p className="text-gray-500 mt-1">Setiap anggota WAJIB membuat laporan individu sesuai jobdesk.</p>
-                    </div>
-                </div>
-
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-                    {session5Tasks.map((item, idx) => (
-                        <div key={idx} className="bg-cyan-50/50 border border-cyan-100 rounded-lg p-3 hover:bg-cyan-100/50 transition-colors">
-                            <h3 className="font-bold text-gray-800 text-sm mb-1">{item.role}</h3>
-                            <p className="text-xs text-gray-500 leading-snug">{item.task}</p>
-                        </div>
-                    ))}
-                </div>
-            </div>
-        </div>
-
-        {/* SESI 6 - EMERALD GREEN THEME */}
-        <div className="bg-emerald-900 rounded-xl shadow-lg p-6 md:p-8 relative overflow-hidden text-white">
-            <div className="absolute top-0 right-0 p-4 opacity-5">
-                 <Presentation className="w-64 h-64" />
-            </div>
-            
-            <div className="relative z-10">
-                <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-6 border-b border-emerald-700 pb-6">
-                    <div>
-                        <div className="flex items-center gap-2 mb-1">
-                            <span className="bg-emerald-800 text-emerald-200 text-xs font-bold px-2 py-1 rounded uppercase tracking-wider flex items-center gap-1"><Clock className="w-3 h-3" /> Sesi 6 (30 Menit)</span>
-                        </div>
-                        <h2 className="text-2xl font-bold text-white flex items-center gap-3 mt-2">
-                            <Presentation className="w-7 h-7 text-yellow-300" /> 
-                            Presentasi UKOM
-                        </h2>
-                        <p className="text-emerald-200 mt-1">Semua anggota bicara (bergiliran).</p>
-                    </div>
-                </div>
-
-                <div className="bg-white/10 backdrop-blur-md border border-white/10 rounded-xl p-6 relative">
-                     <h3 className="text-yellow-300 font-bold mb-4 flex items-center gap-2 text-lg">
-                        <Mic2 className="w-5 h-5" /> Template Jawaban (Wajib Hafal):
-                     </h3>
-                     
-                     <div className="bg-black/40 p-6 rounded-xl font-mono text-base md:text-lg leading-relaxed text-center border border-white/10 text-emerald-300">
-                        “Saya bertugas sebagai <span className="text-white border-b border-dashed border-white/40 mx-1">JOBDESK</span>, pada hari H saya mengerjakan <span className="text-white border-b border-dashed border-white/40 mx-1">TUGAS SAYA</span>, kendala <span className="text-white border-b border-dashed border-white/40 mx-1">MASALAH</span>, solusinya <span className="text-white border-b border-dashed border-white/40 mx-1">SOLUSI SAYA</span>.”
-                     </div>
-                </div>
-            </div>
-        </div>
-
-     </div>
-
     </div>
   );
 };
