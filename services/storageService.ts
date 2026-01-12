@@ -107,7 +107,7 @@ export const checkDuplicateStudent = async (studentName: string, className: stri
 
 export const authenticateUser = async (username: string, password: string): Promise<{ success: boolean; user?: AdminUser }> => {
   // Hardcoded Fallback - THIS IS THE SUPER ADMIN
-  if (username === 'admin' && password === 'admin123') {
+  if (username === 'admin' && password === 'smkma@2026') {
      return { 
        success: true, 
        user: { 
