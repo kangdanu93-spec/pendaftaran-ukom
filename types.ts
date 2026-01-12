@@ -26,6 +26,7 @@ export interface SystemSettings {
 }
 
 export enum ViewState {
+  GATE = 'GATE', // New: Gatekeeper / Login screen
   HOME = 'HOME',
   FORM = 'FORM',
   LIST = 'LIST',

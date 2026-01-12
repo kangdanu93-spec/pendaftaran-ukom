@@ -1,19 +1,22 @@
 import React from 'react';
 import { ViewState } from '../types';
-import { Layout, Users, FileText, SearchCheck, List, Briefcase } from 'lucide-react';
+import { Layout, Users, FileText, SearchCheck, List, Briefcase, LogOut } from 'lucide-react';
 
 interface NavbarProps {
   currentView: ViewState;
   setView: (view: ViewState) => void;
+  onLogout?: () => void; // Optional to handle "Exit" action
 }
 
-const Navbar: React.FC<NavbarProps> = ({ currentView, setView }) => {
+const Navbar: React.FC<NavbarProps> = ({ currentView, setView, onLogout }) => {
   const navItems = [
     { view: ViewState.HOME, label: 'Beranda', icon: <Layout className="w-5 h-5" /> },
     { view: ViewState.WORKFLOW, label: 'Alur & Jobdesk', icon: <Briefcase className="w-5 h-5" /> },
     { view: ViewState.FORM, label: 'Daftar', icon: <FileText className="w-5 h-5" /> },
     { view: ViewState.PUBLIC_LIST, label: 'Lihat Kelompok', icon: <List className="w-5 h-5" /> },
     { view: ViewState.CHECK_STATUS, label: 'Cek Nilai', icon: <SearchCheck className="w-5 h-5" /> },
+    // Admin list is conditional, usually we can keep it here, but if "Gatekeeper" handles admin login, 
+    // user might want to click this to go to admin view if they are already logged in.
     { view: ViewState.LIST, label: 'Admin', icon: <Users className="w-5 h-5" /> },
   ];
 
@@ -44,11 +47,27 @@ const Navbar: React.FC<NavbarProps> = ({ currentView, setView }) => {
                 {item.label}
               </button>
             ))}
+
+            {/* EXIT / LOGOUT BUTTON */}
+            {onLogout && (
+                 <button
+                    onClick={onLogout}
+                    className="ml-4 flex items-center px-4 py-2 border border-red-200 text-red-600 rounded-lg text-sm font-bold hover:bg-red-50 transition-colors"
+                    title="Keluar Aplikasi"
+                 >
+                    <LogOut className="w-4 h-4 mr-2" />
+                    Keluar
+                 </button>
+            )}
           </div>
 
           {/* Mobile Menu Button (Simple implementation) */}
-          <div className="flex items-center sm:hidden">
-             <div className="text-xs text-gray-500">Menu tersedia di Desktop</div>
+          <div className="flex items-center sm:hidden gap-2">
+             {onLogout && (
+                 <button onClick={onLogout} className="p-2 text-red-600 bg-red-50 rounded-lg">
+                    <LogOut className="w-5 h-5" />
+                 </button>
+             )}
           </div>
         </div>
       </div>

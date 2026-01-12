@@ -2,22 +2,47 @@ import React, { useState } from 'react';
 import Navbar from './components/Navbar';
 import RegistrationForm from './components/RegistrationForm';
 import GroupList from './components/GroupList';
-import LoginForm from './components/LoginForm';
 import StudentStatusCheck from './components/StudentStatusCheck';
 import PublicGroupView from './components/PublicGroupView';
 import WorkflowGuide from './components/WorkflowGuide';
+import Gatekeeper from './components/Gatekeeper';
 import { ViewState, AdminUser } from './types';
 import { ClipboardList, ArrowRight, MessageCircle, Briefcase } from 'lucide-react';
 
 const App: React.FC = () => {
-  const [currentView, setCurrentView] = useState<ViewState>(ViewState.HOME);
+  // App starts in GATE state (Locked)
+  const [currentView, setCurrentView] = useState<ViewState>(ViewState.GATE);
   const [showSuccess, setShowSuccess] = useState(false);
   const [currentUser, setCurrentUser] = useState<AdminUser | null>(null);
 
+  // Function to handle unlock from Gatekeeper
+  const handleAppUnlock = (user?: AdminUser) => {
+    if (user) {
+        // Logged in as Admin
+        setCurrentUser(user);
+        setCurrentView(ViewState.LIST);
+    } else {
+        // Logged in as Student/Guest
+        setCurrentUser(null);
+        setCurrentView(ViewState.HOME);
+    }
+  };
+
+  // Function to logout / lock app
+  const handleLogout = () => {
+    setCurrentUser(null);
+    setCurrentView(ViewState.GATE);
+    setShowSuccess(false);
+  };
+
   const handleRegistrationSuccess = () => {
     setShowSuccess(true);
-    // Kita tidak redirect otomatis agar siswa bisa melihat link WA
   };
+
+  // If view is GATE, show Gatekeeper only (No Navbar)
+  if (currentView === ViewState.GATE) {
+      return <Gatekeeper onUnlock={handleAppUnlock} />;
+  }
 
   const renderContent = () => {
     switch (currentView) {
@@ -50,7 +75,7 @@ const App: React.FC = () => {
             <button 
               onClick={() => {
                 setShowSuccess(false);
-                setCurrentView(ViewState.CHECK_STATUS); // Redirect to check status instead of list
+                setCurrentView(ViewState.CHECK_STATUS); 
               }}
               className="text-gray-500 font-medium hover:text-emerald-600 hover:underline transition-colors"
             >
@@ -67,10 +92,14 @@ const App: React.FC = () => {
       case ViewState.WORKFLOW:
           return <WorkflowGuide />;
       case ViewState.LIST:
+        // Admin view already has its own internal login form if accessed directly, 
+        // but since we gate the whole app, we can pass the user here.
         if (!currentUser) {
-          return <LoginForm onLogin={(user) => setCurrentUser(user)} />;
+            // Should not happen if coming from Gatekeeper admin login, 
+            // but effectively redirects to Gatekeeper logic if refreshed without persisted auth
+            return <Gatekeeper onUnlock={handleAppUnlock} />;
         }
-        return <GroupList currentUser={currentUser} onLogout={() => setCurrentUser(null)} />;
+        return <GroupList currentUser={currentUser} onLogout={handleLogout} />;
       case ViewState.HOME:
       default:
         return (
@@ -126,10 +155,10 @@ const App: React.FC = () => {
   };
 
   return (
-    // Updated: print:bg-white to remove gradients in print, print:h-auto to allow full page printing
     <div className="min-h-screen bg-gradient-to-br from-slate-50 via-white to-emerald-50/50 flex flex-col font-sans print:bg-white print:h-auto print:overflow-visible">
-      <Navbar currentView={currentView} setView={setCurrentView} />
-      {/* Updated: print:p-0 to maximize print area */}
+      {/* Pass onLogout to Navbar to show Exit button */}
+      <Navbar currentView={currentView} setView={setCurrentView} onLogout={handleLogout} />
+      
       <main className="flex-grow w-full py-8 px-4 sm:px-6 lg:px-8 print:p-0 print:w-full">
         {renderContent()}
       </main>
