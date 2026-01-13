@@ -150,8 +150,10 @@ const RegistrationForm: React.FC<RegistrationFormProps> = ({ onSuccess }) => {
     const gName = `Kelompok ${num}`;
     const count = registrations.filter(r => r.className === className && r.teamName === gName).length;
     
-    // Logic: Kelompok 1-5 maks 6 orang, Kelompok 6 maks 7 orang
-    const limit = num === 6 ? 7 : 6;
+    // Logic: 
+    // Kelompok 1, 2, 3 => Maksimal 5 Orang
+    // Kelompok 4, 5    => Maksimal 6 Orang
+    const limit = num <= 3 ? 5 : 6;
     
     const isFull = count >= limit;
     return {
@@ -317,6 +319,7 @@ const RegistrationForm: React.FC<RegistrationFormProps> = ({ onSuccess }) => {
                 >
                   <option value="12 MM1">12 MM1</option>
                   <option value="12 MM2">12 MM2</option>
+                  <option value="12 TKR">12 TKR</option>
                 </select>
               </div>
             </div>
@@ -340,7 +343,7 @@ const RegistrationForm: React.FC<RegistrationFormProps> = ({ onSuccess }) => {
 
             {/* Pilih Kelompok */}
             <div className="md:col-span-2">
-              <label className="block text-sm font-medium text-gray-700 mb-1">Pilih Kelompok (Kel. 1-5: Maks 6, Kel. 6: Maks 7) *</label>
+              <label className="block text-sm font-medium text-gray-700 mb-1">Pilih Kelompok (Kel. 1-3: Maks 5, Kel. 4-5: Maks 6) *</label>
               <div className="relative">
                  <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
                   <Users className="h-5 w-5 text-gray-400" />
@@ -354,7 +357,7 @@ const RegistrationForm: React.FC<RegistrationFormProps> = ({ onSuccess }) => {
                   }`}
                 >
                   <option value="" disabled>-- Pilih Kelompok --</option>
-                  {[1, 2, 3, 4, 5, 6].map((num) => {
+                  {[1, 2, 3, 4, 5].map((num) => {
                     const status = getOptionLabel(num);
                     return (
                       <option key={num} value={status.value} disabled={status.disabled} className={status.disabled ? 'text-gray-400 bg-gray-50' : ''}>
@@ -365,7 +368,7 @@ const RegistrationForm: React.FC<RegistrationFormProps> = ({ onSuccess }) => {
                 </select>
               </div>
               <p className="text-xs text-gray-500 mt-1">
-                Kapasitas: Kelompok 1-5 (Max 6), Kelompok 6 (Max 7).
+                Kapasitas: Kelompok 1-3 (Max 5), Kelompok 4-5 (Max 6).
               </p>
             </div>
           </div>

@@ -84,7 +84,10 @@ export const checkGroupAvailability = async (className: string, teamName: string
   const match = teamName.match(/Kelompok (\d+)/);
   const groupNum = match ? parseInt(match[1]) : 0;
   
-  const limit = groupNum === 6 ? 7 : 6;
+  // Logic: 
+  // Kelompok 1-3 = Limit 5
+  // Kelompok 4-5 = Limit 6
+  const limit = groupNum <= 3 ? 5 : 6;
 
   return {
     count,

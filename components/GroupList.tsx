@@ -191,8 +191,8 @@ const GroupList: React.FC<GroupListProps> = ({ currentUser, onLogout }) => {
   };
 
   // Grouping & Filtering Logic
-  const classes = ['12 MM1', '12 MM2'];
-  const groupNumbers = [1, 2, 3, 4, 5, 6];
+  const classes = ['12 MM1', '12 MM2', '12 TKR'];
+  const groupNumbers = [1, 2, 3, 4, 5];
 
   const filteredRegistrations = searchTerm 
     ? registrations.filter(r => 
@@ -530,7 +530,7 @@ const GroupList: React.FC<GroupListProps> = ({ currentUser, onLogout }) => {
                 // Collect all unique team names for this class
                 const existingTeams = new Set<string>(registrations.filter(r => r.className === className).map(r => r.teamName));
                 
-                // Merge with standard groups (1-6)
+                // Merge with standard groups (1-5)
                 const allTeamsSet = new Set<string>([...groupNumbers.map(n => `Kelompok ${n}`), ...Array.from(existingTeams)]);
                 
                 // Sort logically: Groups with numbers first, then others alphabetical
@@ -562,10 +562,10 @@ const GroupList: React.FC<GroupListProps> = ({ currentUser, onLogout }) => {
                         {sortedTeams.map((teamName: string) => {
                         const teamMembers = registrations.filter(r => r.className === className && r.teamName === teamName);
                         
-                        // Determine limit (Default 6 for custom/others, 7 for Kelompok 6)
+                        // Determine limit (Groups 1-3: 5, Groups 4-5: 6)
                         const match = teamName.match(/Kelompok (\d+)/i);
                         const groupNum = match ? parseInt(match[1]) : 0;
-                        const limit = groupNum === 6 ? 7 : 6;
+                        const limit = groupNum <= 3 ? 5 : 6;
                         
                         const isFull = teamMembers.length >= limit;
                         const isEmpty = teamMembers.length === 0;

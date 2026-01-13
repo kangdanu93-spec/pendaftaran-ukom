@@ -15,8 +15,8 @@ const PublicGroupView: React.FC = () => {
     return () => unsubscribeReg();
   }, []);
 
-  const classes = ['12 MM1', '12 MM2'];
-  const groupNumbers = [1, 2, 3, 4, 5, 6];
+  const classes = ['12 MM1', '12 MM2', '12 TKR'];
+  const groupNumbers = [1, 2, 3, 4, 5];
 
   if (isLoading) {
     return (
@@ -50,7 +50,8 @@ const PublicGroupView: React.FC = () => {
               {groupNumbers.map(num => {
                 const teamName = `Kelompok ${num}`;
                 const teamMembers = registrations.filter(r => r.className === className && r.teamName === teamName);
-                const limit = num === 6 ? 7 : 6;
+                // Groups 1-3 limit 5, Groups 4-5 limit 6
+                const limit = num <= 3 ? 5 : 6;
                 const isFull = teamMembers.length >= limit;
                 
                 return (
