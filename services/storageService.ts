@@ -84,10 +84,19 @@ export const checkGroupAvailability = async (className: string, teamName: string
   const match = teamName.match(/Kelompok (\d+)/);
   const groupNum = match ? parseInt(match[1]) : 0;
   
-  // Logic: 
-  // Kelompok 1-3 = Limit 5
-  // Kelompok 4-5 = Limit 6
-  const limit = groupNum <= 3 ? 5 : 6;
+  let limit = 6; // Default safe limit
+
+  if (className === '12 TKR') {
+     // LOGIKA KHUSUS 12 TKR
+     // Kelompok 1-3 = Limit 5
+     // Kelompok 4-5 = Limit 6
+     limit = groupNum <= 3 ? 5 : 6;
+  } else {
+     // LOGIKA STANDARD (12 MM1, 12 MM2)
+     // Kelompok 1-5 = Limit 6
+     // Kelompok 6   = Limit 7
+     limit = groupNum === 6 ? 7 : 6;
+  }
 
   return {
     count,

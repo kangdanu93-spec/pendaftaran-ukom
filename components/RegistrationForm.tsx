@@ -150,10 +150,15 @@ const RegistrationForm: React.FC<RegistrationFormProps> = ({ onSuccess }) => {
     const gName = `Kelompok ${num}`;
     const count = registrations.filter(r => r.className === className && r.teamName === gName).length;
     
-    // Logic: 
-    // Kelompok 1, 2, 3 => Maksimal 5 Orang
-    // Kelompok 4, 5    => Maksimal 6 Orang
-    const limit = num <= 3 ? 5 : 6;
+    let limit = 6;
+    
+    if (className === '12 TKR') {
+        // TKR: Kel 1-3 (5), Kel 4-5 (6)
+        limit = num <= 3 ? 5 : 6;
+    } else {
+        // MM: Kel 1-5 (6), Kel 6 (7)
+        limit = num === 6 ? 7 : 6;
+    }
     
     const isFull = count >= limit;
     return {
@@ -162,6 +167,12 @@ const RegistrationForm: React.FC<RegistrationFormProps> = ({ onSuccess }) => {
       disabled: isFull
     };
   };
+
+  // Determine available groups based on class
+  const isTKR = className === '12 TKR';
+  // TKR has 5 groups, MM has 6 groups
+  const totalGroups = isTKR ? 5 : 6;
+  const groupNumbers = Array.from({length: totalGroups}, (_, i) => i + 1);
 
   if (loadingInit) {
     return (
@@ -343,7 +354,7 @@ const RegistrationForm: React.FC<RegistrationFormProps> = ({ onSuccess }) => {
 
             {/* Pilih Kelompok */}
             <div className="md:col-span-2">
-              <label className="block text-sm font-medium text-gray-700 mb-1">Pilih Kelompok (Kel. 1-3: Maks 5, Kel. 4-5: Maks 6) *</label>
+              <label className="block text-sm font-medium text-gray-700 mb-1">Pilih Kelompok *</label>
               <div className="relative">
                  <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
                   <Users className="h-5 w-5 text-gray-400" />
@@ -357,7 +368,7 @@ const RegistrationForm: React.FC<RegistrationFormProps> = ({ onSuccess }) => {
                   }`}
                 >
                   <option value="" disabled>-- Pilih Kelompok --</option>
-                  {[1, 2, 3, 4, 5].map((num) => {
+                  {groupNumbers.map((num) => {
                     const status = getOptionLabel(num);
                     return (
                       <option key={num} value={status.value} disabled={status.disabled} className={status.disabled ? 'text-gray-400 bg-gray-50' : ''}>
@@ -368,7 +379,10 @@ const RegistrationForm: React.FC<RegistrationFormProps> = ({ onSuccess }) => {
                 </select>
               </div>
               <p className="text-xs text-gray-500 mt-1">
-                Kapasitas: Kelompok 1-3 (Max 5), Kelompok 4-5 (Max 6).
+                {isTKR 
+                  ? "Kapasitas TKR: Kelompok 1-3 (Max 5), Kelompok 4-5 (Max 6)." 
+                  : "Kapasitas MM: Kelompok 1-5 (Max 6), Kelompok 6 (Max 7)."
+                }
               </p>
             </div>
           </div>

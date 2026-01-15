@@ -16,7 +16,6 @@ const PublicGroupView: React.FC = () => {
   }, []);
 
   const classes = ['12 MM1', '12 MM2', '12 TKR'];
-  const groupNumbers = [1, 2, 3, 4, 5];
 
   if (isLoading) {
     return (
@@ -39,61 +38,75 @@ const PublicGroupView: React.FC = () => {
       </div>
 
       <div className="space-y-12">
-        {classes.map(className => (
-          <div key={className} className="animate-fade-in">
-            <div className="flex items-center gap-3 mb-6 pb-2 border-b-2 border-gray-100">
-              <School className="w-6 h-6 text-gray-400" />
-              <h2 className="text-2xl font-bold text-gray-800">Kelas {className}</h2>
-            </div>
-            
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-              {groupNumbers.map(num => {
-                const teamName = `Kelompok ${num}`;
-                const teamMembers = registrations.filter(r => r.className === className && r.teamName === teamName);
-                // Groups 1-3 limit 5, Groups 4-5 limit 6
-                const limit = num <= 3 ? 5 : 6;
-                const isFull = teamMembers.length >= limit;
-                
-                return (
-                  <div key={teamName} className={`bg-white rounded-xl shadow-sm border ${isFull ? 'border-orange-200 bg-orange-50/10' : 'border-gray-200'}`}>
-                    {/* Header */}
-                    <div className="px-5 py-3 border-b border-gray-100 flex justify-between items-center bg-gray-50/50 rounded-t-xl">
-                      <h3 className="font-bold text-gray-700">{teamName}</h3>
-                      <span className={`text-xs px-2 py-0.5 rounded-full font-bold ${
-                        isFull ? 'bg-red-100 text-red-600' : 'bg-emerald-100 text-emerald-600'
-                      }`}>
-                        {teamMembers.length}/{limit}
-                      </span>
-                    </div>
+        {classes.map(className => {
+            const isTKR = className === '12 TKR';
+            const totalGroups = isTKR ? 5 : 6;
+            const groupNumbers = Array.from({length: totalGroups}, (_, i) => i + 1);
 
-                    {/* Members List */}
-                    <div className="p-4">
-                        {teamMembers.length > 0 ? (
-                             <ul className="space-y-2">
-                                {teamMembers.map((m, idx) => (
-                                    <li key={m.id} className="flex items-center justify-between text-sm">
-                                        <div className="flex items-center gap-2">
-                                            <span className="text-gray-400 font-mono w-4">{idx + 1}.</span>
-                                            <span className="text-gray-800 font-medium">{m.studentName}</span>
-                                        </div>
-                                        <span className={`text-[10px] px-1.5 rounded font-bold ${m.gender === 'Laki-laki' ? 'text-blue-600 bg-blue-50' : 'text-pink-600 bg-pink-50'}`}>
-                                            {m.gender === 'Laki-laki' ? 'L' : 'P'}
-                                        </span>
-                                    </li>
-                                ))}
-                             </ul>
-                        ) : (
-                            <div className="text-center py-4 text-gray-400 text-sm italic">
-                                Belum ada anggota
-                            </div>
-                        )}
+            return (
+                <div key={className} className="animate-fade-in">
+                    <div className="flex items-center gap-3 mb-6 pb-2 border-b-2 border-gray-100">
+                    <School className="w-6 h-6 text-gray-400" />
+                    <h2 className="text-2xl font-bold text-gray-800">Kelas {className}</h2>
                     </div>
-                  </div>
-                );
-              })}
-            </div>
-          </div>
-        ))}
+                    
+                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                    {groupNumbers.map(num => {
+                        const teamName = `Kelompok ${num}`;
+                        const teamMembers = registrations.filter(r => r.className === className && r.teamName === teamName);
+                        
+                        let limit = 6;
+                        if (isTKR) {
+                            // TKR: Kel 1-3 (5), Kel 4-5 (6)
+                            limit = num <= 3 ? 5 : 6;
+                        } else {
+                            // MM: Kel 1-5 (6), Kel 6 (7)
+                            limit = num === 6 ? 7 : 6;
+                        }
+
+                        const isFull = teamMembers.length >= limit;
+                        
+                        return (
+                        <div key={teamName} className={`bg-white rounded-xl shadow-sm border ${isFull ? 'border-orange-200 bg-orange-50/10' : 'border-gray-200'}`}>
+                            {/* Header */}
+                            <div className="px-5 py-3 border-b border-gray-100 flex justify-between items-center bg-gray-50/50 rounded-t-xl">
+                            <h3 className="font-bold text-gray-700">{teamName}</h3>
+                            <span className={`text-xs px-2 py-0.5 rounded-full font-bold ${
+                                isFull ? 'bg-red-100 text-red-600' : 'bg-emerald-100 text-emerald-600'
+                            }`}>
+                                {teamMembers.length}/{limit}
+                            </span>
+                            </div>
+
+                            {/* Members List */}
+                            <div className="p-4">
+                                {teamMembers.length > 0 ? (
+                                    <ul className="space-y-2">
+                                        {teamMembers.map((m, idx) => (
+                                            <li key={m.id} className="flex items-center justify-between text-sm">
+                                                <div className="flex items-center gap-2">
+                                                    <span className="text-gray-400 font-mono w-4">{idx + 1}.</span>
+                                                    <span className="text-gray-800 font-medium">{m.studentName}</span>
+                                                </div>
+                                                <span className={`text-[10px] px-1.5 rounded font-bold ${m.gender === 'Laki-laki' ? 'text-blue-600 bg-blue-50' : 'text-pink-600 bg-pink-50'}`}>
+                                                    {m.gender === 'Laki-laki' ? 'L' : 'P'}
+                                                </span>
+                                            </li>
+                                        ))}
+                                    </ul>
+                                ) : (
+                                    <div className="text-center py-4 text-gray-400 text-sm italic">
+                                        Belum ada anggota
+                                    </div>
+                                )}
+                            </div>
+                        </div>
+                        );
+                    })}
+                    </div>
+                </div>
+            );
+        })}
       </div>
     </div>
   );

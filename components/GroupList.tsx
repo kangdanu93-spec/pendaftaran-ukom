@@ -192,7 +192,8 @@ const GroupList: React.FC<GroupListProps> = ({ currentUser, onLogout }) => {
 
   // Grouping & Filtering Logic
   const classes = ['12 MM1', '12 MM2', '12 TKR'];
-  const groupNumbers = [1, 2, 3, 4, 5];
+  // We don't rely on fixed groupNumbers here anymore for iteration, 
+  // we build them dynamically based on class type to sort correctly.
 
   const filteredRegistrations = searchTerm 
     ? registrations.filter(r => 
@@ -309,7 +310,12 @@ const GroupList: React.FC<GroupListProps> = ({ currentUser, onLogout }) => {
                                 placeholder="Nama Kelompok"
                             />
                             <datalist id="teamNameOptions">
-                                {groupNumbers.map(n => <option key={n} value={`Kelompok ${n}`} />)}
+                                <option value="Kelompok 1" />
+                                <option value="Kelompok 2" />
+                                <option value="Kelompok 3" />
+                                <option value="Kelompok 4" />
+                                <option value="Kelompok 5" />
+                                <option value="Kelompok 6" />
                             </datalist>
                         </div>
                          <div>
@@ -530,8 +536,13 @@ const GroupList: React.FC<GroupListProps> = ({ currentUser, onLogout }) => {
                 // Collect all unique team names for this class
                 const existingTeams = new Set<string>(registrations.filter(r => r.className === className).map(r => r.teamName));
                 
-                // Merge with standard groups (1-5)
-                const allTeamsSet = new Set<string>([...groupNumbers.map(n => `Kelompok ${n}`), ...Array.from(existingTeams)]);
+                // Determine how many standard groups to show
+                const isTKR = className === '12 TKR';
+                const totalStandardGroups = isTKR ? 5 : 6;
+                const standardGroupNames = Array.from({length: totalStandardGroups}, (_, i) => `Kelompok ${i + 1}`);
+
+                // Merge with standard groups (1-5/6)
+                const allTeamsSet = new Set<string>([...standardGroupNames, ...Array.from(existingTeams)]);
                 
                 // Sort logically: Groups with numbers first, then others alphabetical
                 const sortedTeams = Array.from(allTeamsSet).sort((a: string, b: string) => {
@@ -562,10 +573,18 @@ const GroupList: React.FC<GroupListProps> = ({ currentUser, onLogout }) => {
                         {sortedTeams.map((teamName: string) => {
                         const teamMembers = registrations.filter(r => r.className === className && r.teamName === teamName);
                         
-                        // Determine limit (Groups 1-3: 5, Groups 4-5: 6)
+                        // Determine limit logic
                         const match = teamName.match(/Kelompok (\d+)/i);
                         const groupNum = match ? parseInt(match[1]) : 0;
-                        const limit = groupNum <= 3 ? 5 : 6;
+                        
+                        let limit = 6;
+                        if (isTKR) {
+                             // TKR Logic: 1-3 (5), 4-5 (6)
+                             limit = groupNum <= 3 ? 5 : 6;
+                        } else {
+                             // MM Logic: 1-5 (6), 6 (7)
+                             limit = groupNum === 6 ? 7 : 6;
+                        }
                         
                         const isFull = teamMembers.length >= limit;
                         const isEmpty = teamMembers.length === 0;
